@@ -1,0 +1,56 @@
+{% extends 'index.html' %}
+
+{% block title %} Каталог машино-мест {% endblock title %}
+
+{% block content %}
+<section class="section">
+        <h1 class="title">Каталог машино-мест</h1>
+        <h2 class="subtitle">
+        Здесь представлены <strong>машино-места</strong>, выбирайте и арендуйте.
+        </h2>
+</section>
+    {% for parking_place in parking_list %}
+<div class="card">
+    <div class="card-content">
+        <div class="media">
+        <!-- Информация слева-->
+            <div class="media-left">
+                <figure class="image is-48x48">
+                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                </figure>
+            </div>
+
+            <div class="media-content">
+                <p class="title is-4">
+                <a href="{% url 'parking_detail' parking_place.id %}">{{ parking_place.title | truncatewords:7 }}</a>
+                </p>
+                <p class="subtitle is-6">Владелец {{ parking_place.owner }} от </p>
+            </div>
+            <!-- Информация справа-->
+            <div class="media-right">
+                <p class="title is-4">{{ parking_place.pricePerHour }} руб./час</p>
+                <p class="subtitle is-6">{{ parking_place.get_readyToRent_display }}</p>
+            </div>
+        </div>
+        <div class="content">
+            {{ parking_place.description | truncatewords:20 }}
+            <br>
+        </div>
+    </div>
+
+{% if request.user.username == parking_place.owner.user.username %}
+
+    <footer class="card-footer">
+            <!-- добавим ссылку на редактирование публикации-->
+            <a href="{% url 'update_parking' parking_place.id %}" class="card-footer-item">Редактировать</a>
+            <!-- добавим ссылку на удаление публикации-->
+            <a href="{% url 'delete_parking' parking_place.id %}" class="card-footer-item">Удалить</a>
+    </footer>
+ {% endif %}
+</div>
+
+
+{% endfor %}
+
+
+{% endblock content %}

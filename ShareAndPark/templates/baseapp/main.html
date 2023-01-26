@@ -1,0 +1,33 @@
+{% extends 'index.html' %}
+
+{% block title %} Главная страница {% endblock title %}
+
+{% block content %}
+<section class="section is-medium">
+        <div class=" has-text-centered">
+            <h1 class="title">Share&Park</h1>
+            <h2 class="subtitle">
+                Описание сервиса <strong>самое продающее</strong>, из всех возможных.
+            </h2>
+            <button class="button is-link is-outlined">Хочу парковку</button>
+            <button class="button is-info is-outlined">Xочу сдать паркинг</button>
+        </div>
+        <div class="content has-text-centered">
+
+
+        </div>
+        </section>
+
+<h2 class="subtitle">Доступная парковка</h2>
+   <!-- Выводим товары, только если они есть с помощью тега if -->
+   {% if place_list %}
+       {{ place_list }}
+   {% else %}
+       <!-- Если товаров нет, говорим, что товаров нет ;) -->
+       <h2>Парковочных мест нет!</h2>
+   {% endif %}
+
+
+
+
+{% endblock content %}

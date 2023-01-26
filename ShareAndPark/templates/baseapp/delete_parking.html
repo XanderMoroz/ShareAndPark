@@ -1,0 +1,20 @@
+{% extends 'index.html' %}
+
+{% block title %} Удаление машино-места {% endblock title %}
+
+{% block content %}
+<h2>Вы действительно хотите удалить это машино-место?</h2>
+<table>
+    <thead>
+        <th>Адрес</th>
+    </thead>
+    <tr>
+        <td>{{ parkingplace.title }}</td>
+
+    </tr>
+</table>
+
+<form method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Удалить машино-место"></form>
+{% endblock content %}

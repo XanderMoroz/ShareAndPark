@@ -1,0 +1,92 @@
+{% extends 'index.html' %} <!--  наследуемся от шаблона default.html, который создавали для flatpages -->
+
+{% block title %} Страница машино-места {% endblock title %}
+
+
+{% block content %}
+
+<div class="card">
+  <div class="card-image">
+    <figure class="image is-4by3">
+      <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
+    </figure>
+  </div>
+  <div class="card-content">
+    <div class="media">
+
+      <div class="media-content">
+        <p class="title is-4">{{ parking_detail.title }}</p>
+        <p class="subtitle is-6">Владелец: {{ parking_detail.owner }}</p>
+      </div>
+      <div class="media-right">
+          <p class="title is-4">{{ parking_detail.pricePerHour }} руб./час</p>
+            <p class="subtitle is-6">
+                {{ parking_detail.get_readyToRent_display }}
+            </p>
+        </div>
+
+    </div>
+
+    <div class="content">
+      {{ parking_detail.description }}
+    </div>
+
+     <div class="buttons is-right">
+            <button class="button is-success">
+                <span class="icon">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </span>
+                <span>
+                    <a href="#">
+                        <p class="has-text-white">Арендовать</p>
+                    </a>
+                </span>
+            </button>
+     </div>
+
+
+    <!-- Если пользователь является автором статьи. -->
+        {% if request.user.username == parking_detail.owner.user.username %}
+
+        <!-- Добавляем кнопку редактирования статьи. -->
+        <div class="buttons is-right">
+            <button class="button is-success">
+                <span class="icon">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </span>
+                <span>
+                    <a href="{% url 'update_parking' parking_detail.id %}">
+                        <p class="has-text-white">
+                        Редактировать
+                        </p>
+                    </a>
+                </span>
+            </button>
+
+            <!-- Добавляем кнопку удаления статьи. -->
+            <button class="button is-danger">
+
+                <span>
+                    <a href="{% url 'delete_parking' parking_detail.id %}">
+                        <p class="has-text-white">
+                        Удалить
+                        </p>
+                    </a>
+                </span>
+                <span class="icon">
+                    <i class="fa-solid fa-trash"></i>
+                </span>
+            </button>
+
+        </div>
+        {% endif %}
+
+  </div>
+
+</div>
+
+
+
+{% endblock content %}
+
+
