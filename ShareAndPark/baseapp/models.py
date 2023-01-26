@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse, reverse_lazy
 # Create your models here.
 
 
@@ -21,7 +22,6 @@ class AppUser(models.Model):
 
 class ParkingPlace(models.Model):
     owner = models.ForeignKey(AppUser, on_delete=models.CASCADE, verbose_name='Владелец')
-
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=512, verbose_name='Описание')
     pricePerHour = models.IntegerField(verbose_name='Цена за час')
@@ -49,6 +49,9 @@ class Order(models.Model):
 
     def __str__(self):
         return f'{self.parkingPlace} {self.orderState} {self.arendator}'
+
+    def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
+        return reverse_lazy('parking_list')
 
 class BankCard(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец карты')
