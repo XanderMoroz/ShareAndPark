@@ -1,7 +1,6 @@
-{% extends 'index.html' %} <!--  наследуемся от шаблона default.html, который создавали для flatpages -->
+{% extends 'index.html' %} <!-- наследуемся от шаблона index.html -->
 
 {% block title %} Страница машино-места {% endblock title %}
-
 
 {% block content %}
 
@@ -31,20 +30,6 @@
       {{ parking_detail.description }}
     </div>
 
-     <div class="buttons is-right">
-            <button class="button is-success">
-                <span class="icon">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </span>
-                <span>
-                    <a href="#">
-                        <p class="has-text-white">Арендовать</p>
-                    </a>
-                </span>
-            </button>
-     </div>
-
-
     <!-- Если пользователь является автором статьи. -->
         {% if request.user.username == parking_detail.owner.user.username %}
 
@@ -65,7 +50,6 @@
 
             <!-- Добавляем кнопку удаления статьи. -->
             <button class="button is-danger">
-
                 <span>
                     <a href="{% url 'delete_parking' parking_detail.id %}">
                         <p class="has-text-white">
@@ -77,13 +61,28 @@
                     <i class="fa-solid fa-trash"></i>
                 </span>
             </button>
+            <!-- Если пользователь залогинен и машиноместо готово к аренде. -->
+            {% if request.user.is_authenticated and parking_detail.readyToRent == 'ON' %}
 
+            <form method="POST" >{% csrf_token %} {{ form }}
+                <button type="submit" class="button is-link">
+                    <span class="icon">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    </span>
+                    <a href="#">
+                        <p class="has-text-white">Арендовать</p>
+                    </a>
+                </button>
+
+            {% endif %}
         </div>
         {% endif %}
 
   </div>
 
 </div>
+
+
 
 
 
