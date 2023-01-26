@@ -1,12 +1,10 @@
 # from ckeditor.widgets import CKEditorWidget
 from django import forms
 from django.forms import ModelForm
-from .models import ParkingPlace
+from .models import ParkingPlace, Order
 
 class ParkingForm(ModelForm):
-    """
-    Форма для создания объявления
-    """
+    """ Форма для создания машино-места"""
     # content = forms.CharField(widget=CKEditorWidget, label='Содержание объявления')
     class Meta:
         """
@@ -30,21 +28,19 @@ class ParkingForm(ModelForm):
 
         widgets = {'owner': forms.HiddenInput()}
 
-# class FeedbackForm(ModelForm):
-#     """
-#     Форма для создания отклика на объявление
-#     """
-#     class Meta:
-#         model = Feedback
-#         fields = [
-#             'text',
-#             'ad',
-#             'author'
-#                 ]
-#         labels = {
-#             'text': "Текст отклика",
-#         }
-#
-#         widgets = {'author': forms.HiddenInput(),
-#                    'ad': forms.HiddenInput(),
-#                    }
+class OrderForm(ModelForm):
+    """
+    Форма для создания
+    """
+    class Meta:
+        model = Order
+        fields = [
+            'parkingPlace',
+            'orderState',
+            'arendator'
+                ]
+
+        widgets = {'arendator': forms.HiddenInput(),
+                   'orderState': forms.HiddenInput(),
+                   'parkingPlace': forms.HiddenInput(),
+                   }
