@@ -71,7 +71,7 @@
                         </a>
 
                         <hr class="navbar-divider">
-                        <a class="navbar-item" href="#">
+                        <a class="navbar-item" href="{% url 'logout' %}">
                             <span class="icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span>
                             <span>Выйти</span>
                         </a>
@@ -95,12 +95,12 @@
                         <span>Личный кабинет</span>
                     </a>
                     <div class="navbar-dropdown" >
-                        <a class="navbar-item" href="#">
+                        <a class="navbar-item" href="{% url 'login' %}">
                             <span class="icon"><i class="fa-solid fa-right-to-bracket"></i></span>
                             <span>Войти</span>
                         </a>
                         <hr class="navbar-divider">
-                        <a class="navbar-item" href="#">
+                        <a class="navbar-item" href="{% url 'signup' %}">
                             <span class="icon"><i class="fa-solid fa-address-card"></i></i></span>
                             <span>Регистрация</span>
                         </a>

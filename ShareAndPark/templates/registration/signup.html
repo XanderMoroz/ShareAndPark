@@ -1,0 +1,15 @@
+<!--/templates/register.html-->
+
+{% block content %}
+<h2>Register</h2>
+
+<h2> Войти в систему </h2>
+<form method="post">
+{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Продолжить">
+</form>
+
+<a href="{% url 'login' %}">Back to login</a>
+<a href="{% url 'welcome page' %}">Back to Home</a>
+{% endblock %}
