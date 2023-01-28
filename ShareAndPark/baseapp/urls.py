@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import SearchParking, MainPage, ParkingList, ParkingDetail, CreateParking, UpdateParking, DeleteParking
+from .views import SearchParking, MainPage, ParkingList, ParkingDetail, CreateParking, UpdateParking, DeleteParking, Profile, EditProfile, UpdateOrder
 
 urlpatterns = [
     path('', MainPage.as_view(), name='welcome page'),                          # Главная страница
@@ -10,4 +10,7 @@ urlpatterns = [
     path('edit/<int:pk>', UpdateParking.as_view(), name='update_parking'),      # Редактировать машино-место
     path('delete/<int:pk>', DeleteParking.as_view(), name='delete_parking'),    # Удалить машино-место
 
+    path('profile', Profile.as_view(), name='profile'),    # Удалить машино-место
+    path('edit_profile/<int:pk>', EditProfile.as_view(), name='edit_profile'),  # Удалить машино-место
+    path('profile/edit_profile/<int:pk>', UpdateOrder.as_view(), name='update_order'),  # Удалить машино-место
 ]

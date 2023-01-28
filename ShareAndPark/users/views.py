@@ -5,16 +5,16 @@ from django.contrib.auth.forms import UserCreationForm
 from .forms import BaseRegisterForm
 from django.views.generic import TemplateView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+# from baseapp.models import AppUser
+#
+# class HomePage(LoginRequiredMixin, TemplateView):
+#     template_name = 'users/profile.html'
 
-
-class HomePage(LoginRequiredMixin, TemplateView):
-    template_name = 'users/home.html'
-
-class BaseRegisterView(CreateView):
+class SignUp(CreateView):
     model = User
     form_class = BaseRegisterForm
     template_name = "registration/signup.html"
-    success_url = '/'
+    success_url = reverse_lazy("login")
 
 # class SignUp(CreateView):
 #     form_class = UserCreationForm

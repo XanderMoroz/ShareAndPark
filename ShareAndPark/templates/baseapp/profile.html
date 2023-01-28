@@ -1,0 +1,136 @@
+{% extends 'index.html' %}
+
+{% block title %} Личный кабинет {% endblock %}
+
+{% block content %}
+
+<!-- Аннотация страницы-->
+<section class="section">
+        <h1 class="title">Привет, {{ user.username|default:'Guest' }} !</h1>
+        <h2 class="subtitle">
+            Это страница - ваш <strong>персональный</strong> аккаунт.
+            Редактируйте профиль, добавляйте машино-места, управляйте бронью.
+        </h2>
+</section>
+
+<section class="section">
+<div class="box">
+  Профиль
+</div>
+
+    {% if request.user == profile.user %}
+
+    <footer class="card-footer">
+            <!-- добавим ссылку на редакирование профиля-->
+            <a href="{% url 'edit_profile' profile.id %}" class="card-footer-item">Редактировать</a>
+    </footer>
+ {% endif %}
+</section>
+
+<section class="section">
+<div class="box">
+  Добавленные машино-места
+</div>
+    {% for my_place in my_places %}
+<div class="card">
+    <div class="card-content">
+        <div class="media">
+        <!-- Информация слева-->
+            <div class="media-left">
+                <figure class="image is-48x48">
+                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                </figure>
+            </div>
+
+            <div class="media-content">
+                <p class="title is-4">
+                <a href="{% url 'parking_detail' my_place.id %}">{{ my_place.title | truncatewords:7 }}</a>
+                </p>
+                <p class="subtitle is-6">Владелец {{ my_place.owner }}</p>
+            </div>
+            <!-- Информация справа-->
+            <div class="media-right">
+                <p class="title is-4">{{ my_place.pricePerHour }} руб./час</p>
+                <p class="subtitle is-6">{{ my_place.get_readyToRent_display }}</p>
+            </div>
+        </div>
+        <div class="content">
+            {{ my_place.description | truncatewords:20 }}
+            <br>
+        </div>
+    </div>
+
+    <footer class="card-footer">
+            <!-- добавим ссылку на редактирование публикации-->
+            <a href="{% url 'update_parking' my_place.id %}" class="card-footer-item">Редактировать</a>
+            <!-- добавим ссылку на удаление публикации-->
+            <a href="{% url 'delete_parking' my_place.id %}" class="card-footer-item">Удалить</a>
+    </footer>
+
+</div>
+     {% endfor %}
+    <footer class="card-footer">
+            <!-- добавим ссылку на редакирование профиля-->
+            <a href="{% url 'create_parking'%}" class="card-footer-item">добавить новое машиноместо</a>
+    </footer>
+</section>
+
+<section class="section">
+<div class="box">
+    Мои брони
+</div>
+    {% for my_order in my_orders %}
+    {% if my_order.orderState == 'ON' %}
+
+    <div class="card">
+    <div class="card-content">
+        <div class="media">
+        <!-- Информация слева-->
+            <div class="media-left">
+                <figure class="image is-48x48">
+                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                </figure>
+            </div>
+
+            <div class="media-content">
+                <p class="title is-4">
+                <a href="#">{{ my_order.parkingPlace.title | truncatewords:7 }}</a>
+                </p>
+                <p class="subtitle is-6">Владелец {{ my_place.owner }}</p>
+            </div>
+            <!-- Информация справа-->
+            <div class="media-right">
+                <p class="title is-4">{{ my_place.pricePerHour }} руб./час</p>
+                <p class="subtitle is-6">{{ my_place.get_readyToRent_display }}</p>
+            </div>
+        </div>
+        <div class="content">
+            {{ my_place.description | truncatewords:20 }}
+            <br>
+        </div>
+    </div>
+
+    <footer class="card-footer">
+            <!-- добавим ссылку на редактирование публикации-->
+            <a href="{% url 'update_order' my_order.id %}" class="card-footer-item">Редактировать</a>
+    </footer>
+
+</div>
+ {% endif %}
+    {% endfor %}
+</section>
+
+<!--    <h1>Hello, {{ user.username|default:'Guest' }}</h1>-->
+
+<!--    <p> Welcome to the Our site</p>-->
+<!--    <div>-->
+<!--      {% if user.is_authenticated %}-->
+<!--          <a href="{% url 'logout' %}">Logout</a>-->
+
+<!--      {% else %}-->
+<!--          <a href="{% url 'signup' %}">Sign Up</a>-->
+<!--          <a href="{% url 'login' %}">Login</a>-->
+<!--      {% endif %}-->
+<!--  </div>-->
+
+{% endblock content %}

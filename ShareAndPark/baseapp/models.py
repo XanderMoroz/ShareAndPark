@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse, reverse_lazy
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 # Create your models here.
 
 
@@ -15,7 +17,15 @@ class AppUser(models.Model):
     name = models.CharField(max_length=128, verbose_name='Имя')
     surname = models.CharField(max_length=128, verbose_name='Фамилия')
     phoneNumber = models.CharField(max_length=15, verbose_name='Номер телефона')
-    afertaSubmission = models.BooleanField(verbose_name='Согласие с афертой')
+    afertaSubmission = models.BooleanField(verbose_name='Согласие с афертой', default=True,)
+
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            AppUser.objects.create(user=instance)
+
+    def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
+        return reverse_lazy('profile')
 
     def __str__(self):
         return f'{self.user}'
@@ -42,8 +52,8 @@ class ParkingPlace(models.Model):
 class Order(models.Model):
     parkingPlace = models.ForeignKey(ParkingPlace, on_delete=models.CASCADE, verbose_name='Машино-место')
     orderState = models.CharField(verbose_name='Статус аренды',
-                                  choices=[('ON', 'Арендуется'), ('OFF', 'Не арендуется')],
-                                  default='OFF',
+                                  choices=[('ON', 'Арендуется'), ('OFF', 'Аренда завершена')],
+                                  default='ON',
                                   max_length=3)
     arendator = models.ForeignKey(AppUser, on_delete=models.CASCADE, verbose_name='Арендатор')
 
@@ -51,7 +61,7 @@ class Order(models.Model):
         return f'{self.parkingPlace} {self.orderState} {self.arendator}'
 
     def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
-        return reverse_lazy('parking_list')
+        return reverse_lazy('profile')
 
 class BankCard(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец карты')
