@@ -1,0 +1,38 @@
+{% extends 'index.html' %}
+
+{% block title %} Привязывание карты к профилю {% endblock title %}
+ 
+{% block content %}
+<!-- Аннотация страницы-->
+<section class="section">
+        <h1 class="title">Привязывание карты к профилю</h1>
+        <h2 class="subtitle">
+        Здесь вы можете <strong>добавить</strong> банковскую карту.
+        </h2>
+</section>
+
+<form class="box " method="POST">
+  {% csrf_token %}
+
+
+    {{ form.media }} <!-- Теперь нам нужна только готовая форма и кнопка -->
+    {{ form.as_table }}
+
+  <button type="submit" class="button is-primary">Добавить банковскую карту</button>
+</form>
+
+<!--старый-->
+<!--<form method="POST">-->
+<!--    {% csrf_token %}-->
+
+
+<!--    {{ form.media }} &lt;!&ndash; Теперь нам нужна только готовая форма и кнопка &ndash;&gt;-->
+<!--    {{ form.as_table }}-->
+
+<!--    <br>-->
+
+
+<!--    <input type="submit" value="Добавить банковскую карту">-->
+<!--</form>-->
+
+{% endblock content %}
