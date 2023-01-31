@@ -9,8 +9,12 @@
             <h2 class="subtitle">
                 Описание сервиса <strong>самое продающее</strong>, из всех возможных.
             </h2>
+            <a href="{% url 'signup' %}">
             <button class="button is-link is-outlined">Хочу парковку</button>
+            </a>
+            <a href="{% url 'signup' %}">
             <button class="button is-info is-outlined">Xочу сдать паркинг</button>
+            </a>
         </div>
         <div class="content has-text-centered">
 
@@ -20,8 +24,37 @@
 
 <h2 class="subtitle">Доступная парковка</h2>
    <!-- Выводим товары, только если они есть с помощью тега if -->
-   {% if place_list %}
-       {{ place_list }}
+   {% if demo_place_list %}
+{% for place in demo_place_list %}
+<div class="card">
+    <div class="card-content">
+        <div class="media">
+        <!-- Информация слева-->
+            <div class="media-left">
+                <figure class="image is-48x48">
+                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                </figure>
+            </div>
+
+            <div class="media-content">
+                <p class="title is-4">
+                <a href="{% url 'parking_detail' place.id %}">{{ place.title | truncatewords:7 }}</a>
+                </p>
+                <p class="subtitle is-6">Владелец {{ place.owner }}</p>
+            </div>
+            <!-- Информация справа-->
+            <div class="media-right">
+                <p class="title is-4">{{ place.pricePerHour }} руб./час</p>
+                <p class="subtitle is-6">{{ place.get_readyToRent_display }}</p>
+            </div>
+        </div>
+        <div class="content">
+            {{ place.description | truncatewords:20 }}
+            <br>
+        </div>
+    </div>
+    {% endfor %}
+<!--       {{ demo_place_list }}-->
    {% else %}
        <!-- Если товаров нет, говорим, что товаров нет ;) -->
        <h2>Парковочных мест нет!</h2>
