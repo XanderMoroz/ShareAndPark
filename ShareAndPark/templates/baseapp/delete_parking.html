@@ -3,6 +3,21 @@
 {% block title %} Удаление машино-места {% endblock title %}
 
 {% block content %}
+
+<!-- Аннотация страницы-->
+<section class="section">
+        <h1 class="title">Удаление банковской карты карты</h1>
+        <h2 class="subtitle">
+        Карта будет <strong>безвозвратно</strong> удалена.
+        </h2>
+</section>
+
+<form class="box " method="POST">
+  {% csrf_token %}
+
+  <button type="submit" class="button is-primary">Удалить машино-место</button>
+</form>
+
 <h2>Вы действительно хотите удалить это машино-место?</h2>
 <table>
     <thead>
