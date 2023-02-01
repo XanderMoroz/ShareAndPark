@@ -1,8 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, ListView, CreateView, DetailView, UpdateView, DeleteView
-from .models import ParkingPlace, Order, AppUser
-from .forms import ParkingForm, OrderForm, ProfileForm, ProfileOrderForm
+from .models import ParkingPlace, Order, AppUser, BankCard
+from .forms import ParkingForm, OrderForm, ProfileForm, BankCardForm
 from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+from django.urls import reverse, reverse_lazy
 # Create your views here.
 
 #from django.contrib.postgres.search import SearchVector, SearchQuery, SearchHeadline
@@ -59,7 +61,7 @@ class CreateParking(CreateView, LoginRequiredMixin):
         """
         initial = super().get_initial()
         user = self.request.user
-        initial['user'] = user
+        initial['owner'] = user
         return initial
 
 class UpdateParking(UpdateView, LoginRequiredMixin):
@@ -78,7 +80,7 @@ class DeleteParking(DeleteView, LoginRequiredMixin):
     """
     template_name = 'baseapp/delete_parking.html'
     queryset = ParkingPlace.objects.all()
-    success_url = '/'
+    success_url = reverse_lazy('profile')
 
 class Profile(TemplateView):
     model = User
@@ -99,10 +101,12 @@ class Profile(TemplateView):
         # К словарю добавим список связанных с объявлением откликов'.
         user = self.request.user
         profile = AppUser.objects.get(user=user)
+        myCards = BankCard.objects.filter(owner=profile)
         myParkingPlaces = ParkingPlace.objects.filter(owner=profile)
-        myBooking = Order.objects.filter(arendator=profile)
+        myBooking = Order.objects.filter(arendator=profile, orderState='ON')
         context['profile'] = profile
         context['my_places'] = myParkingPlaces
+        context['my_cards'] = myCards
         context['my_orders'] = myBooking
         return context
 
@@ -115,7 +119,6 @@ class EditProfile(UpdateView):
         id = self.kwargs.get('pk')
         return AppUser.objects.get(pk=id)
 
-
 class OrderDetail(DetailView):
     model = ParkingPlace
     # Используем шаблон — ad_detail.html
@@ -123,7 +126,29 @@ class OrderDetail(DetailView):
     # Название объекта, в котором будет выбранное пользователем объявление
     context_object_name = 'order_detail'
 
-class UpdateOrder(UpdateView):
-    model = Order
-    template_name = 'baseapp/edit_order.html'
-    form_class = ProfileOrderForm
+def stop_arendation(request, **kwargs):
+    order = Order.objects.get(pk=kwargs['pk'])
+    order.orderState =  'OFF'
+    order.save(update_fields=["orderState"])
+
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+class CreateBankCard(CreateView, LoginRequiredMixin):
+    model = BankCard
+    template_name = 'baseapp/create_bankcard.html'
+    form_class = BankCardForm
+
+    def get_initial(self):
+        """
+        Переопределение функции для автозаполнения поля "автор объявления"
+        """
+        initial = super().get_initial()
+        user = self.request.user
+        profile = AppUser.objects.filter(user=user)
+        initial['owner'] = user
+        return initial
+
+class DeleteBankCard(DeleteView, LoginRequiredMixin):
+    template_name = 'baseapp/delete_bankcard.html'
+    queryset = BankCard.objects.all()
+    success_url = reverse_lazy('profile')

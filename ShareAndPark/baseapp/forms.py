@@ -1,7 +1,7 @@
 # from ckeditor.widgets import CKEditorWidget
 from django import forms
 from django.forms import ModelForm
-from .models import ParkingPlace, Order, AppUser
+from .models import ParkingPlace, Order, AppUser, BankCard
 
 class ParkingForm(ModelForm):
     """ Форма для создания машино-места"""
@@ -71,4 +71,18 @@ class ProfileOrderForm(ModelForm):
         widgets = {'arendator': forms.HiddenInput(),
                    # 'orderState': forms.HiddenInput(),
                    'parkingPlace': forms.HiddenInput(),
+                   }
+
+class BankCardForm(ModelForm):
+    """Форма для создания банковской карты"""
+
+    class Meta:
+        model = BankCard
+        fields = [
+            'owner',
+            'balance',
+        ]
+
+        widgets = {'owner': forms.HiddenInput(),
+                   'balance': forms.HiddenInput(),
                    }
