@@ -89,7 +89,7 @@
                             <div class="media-content">
                                 <p class="title is-4">
                                     <a href="#">
-                                        На вашем счете {{ my_card.balance }} рублей.
+                                        На вашем счете:
                                     </a>
                                 </p>
                                 <p class="subtitle is-6">
@@ -98,8 +98,8 @@
                             </div>
                             <!-- Информация справа-->
                             <div class="media-right">
-                                <p class="title is-4">СБЕР</p>
-                                <p class="subtitle is-6">Дебетовая</p>
+                                <p class="title is-4">{{ my_card.balance }} рублей.</p>
+                                <p class="subtitle is-6">Не так уж и много</p>
                             </div>
                         </div>
                         <div class="content">
@@ -140,7 +140,7 @@
             </button>
         </header>
         <div class="card-content">
-
+            {% if my_places  %}
             {% for my_place in my_places %}
 
             <div class="content">
@@ -184,7 +184,10 @@
                     </footer>
                 </div>
             </div>
-            {% endfor %}
+             {% endfor %}
+            {% else %}
+            <h2 class="subtitle">К сожалению вы не добавили ни одного машиноместа...</h2>
+            {% endif %}
         </div>
     </div>
 </section>
@@ -198,7 +201,7 @@
             <button class="card-header-icon" aria-label="more options">
                 <span class="icon">
                     <a href="#">
-                        <i class="fa-regular fa-plus"></i>
+                        <i class="fa-brands fa-shopify"></i>
                     </a>
                 </span>
             </button>
@@ -206,7 +209,6 @@
         <div class="card-content">
             {% if my_orders  %}
             {% for my_order in my_orders %}
-
             <div class="content">
                 <div class="card">
                     <div class="card-content">
@@ -221,17 +223,17 @@
                             <div class="media-content">
                                 <p class="title is-4">
                                     <a href="#">
-                                        {{ my_order.get_orderState_display }} машиноместо.
+                                        {{ my_order.get_orderState_display }} машино-место по адресу {{ my_order.parkingPlace.title }}
                                     </a>
                                 </p>
                                 <p class="subtitle is-6">
-                                    По адресу {{ my_order.parkingPlace }}
+                                    Владелец {{ my_order.parkingPlace.owner }} {{ my_order.parkingPlace.owner.phoneNumber }}
                                 </p>
                             </div>
                             <!-- Информация справа-->
                             <div class="media-right">
-                                <p class="title is-4">Время аренды</p>
-                                <p class="subtitle is-6">Дебетовая</p>
+                                <p class="title is-4">{{ my_order.creation_date | date:'G:i' }}</p>
+                                <p class="subtitle is-6">{{ my_order.creation_date | date:'d.M.Y.' }}</p>
                             </div>
                         </div>
                         <div class="content">
@@ -241,6 +243,9 @@
                     </div>
 
                     <footer class="card-footer">
+                        <!-- добавим ссылку на удаление карты-->
+                        <a href="{% url 'update_order' my_order.id %}" class="card-footer-item">Завершить аренду</a>
+
                         <!-- добавим ссылку на удаление карты-->
                         <a href="{% url 'stop_arendation' my_order.id %}" class="card-footer-item">Завершить аренду</a>
                     </footer>
@@ -256,5 +261,66 @@
     </div>
 </section>
 <!--                     РАЗДЕЛ С МОИМИ БРОНЯМИ КОНЕЦ                      -->
+
+<!--                     РАЗДЕЛ С МОИМИ ДОХОДАМИ НАЧАЛО                    -->
+<section class="section">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">
+                МОИ ДОХОДЫ</p>
+            <button class="card-header-icon" aria-label="more options">
+                <span class="icon">
+                    <a href="">
+
+                        <i class="fa-solid fa-money-bill-1-wave"></i>
+                    </a>
+                </span>
+            </button>
+        </header>
+        <div class="card-content">
+        {% if my_cards %}
+            {% for profit in my_profits %}
+
+            <div class="content">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="media">
+                            <!-- Информация слева-->
+<!--                            <div class="media-left">-->
+<!--                                <figure class="image is-48x48">-->
+<!--                                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">-->
+<!--                                </figure>-->
+<!--                            </div>-->
+
+                            <div class="media-content">
+                                <p class="title is-4">
+                                    <a href="#">
+                                        Вы заработали
+                                    </a>
+                                </p>
+                                <p class="subtitle is-6">
+                                    За аренду машино-места по адресу:
+                                </p>
+                            </div>
+                            <!-- Информация справа-->
+                            <div class="media-right">
+                                <p class="title is-4">{{ profit.amount }} рублей.</p>
+                                <p class="subtitle is-6">Так держать!</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <h2 class="subtitle">К сожалению вы ничего не заработали...</h2>
+            {% endif %}
+
+        </div>
+    </div>
+</section>
+<!--                 РАЗДЕЛ С МОИМИ ДОХОДАМИ КОНЕЦ                        -->
 
 {% endblock content %}

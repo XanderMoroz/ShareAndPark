@@ -3,7 +3,10 @@ from django.contrib.auth.models import User
 from django.urls import reverse, reverse_lazy
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 from datetime import datetime
+import re
+
 # Create your models here.
 
 
@@ -45,7 +48,7 @@ class ParkingPlace(models.Model):
     longitude = models.FloatField(verbose_name='Долгота', default=0.0)
     readyToRent = models.CharField(verbose_name='Статус',
                                    choices=[('ON', 'Готов к аренде'), ('OFF', 'Не готов к аренде')],
-                                   default='OFF',
+                                   default='ON',
                                    max_length=3
                                    )
 
@@ -60,8 +63,8 @@ class ParkingPlace(models.Model):
         return reverse_lazy('profile')
 
 class Order(models.Model):
-    # creation_date = models.DateTimeField(auto_now_add=True)
     parkingPlace = models.ForeignKey(ParkingPlace, on_delete=models.CASCADE, verbose_name='Машино-место')
+    creation_date = models.DateTimeField(auto_now_add=True, editable=False)
     orderState = models.CharField(verbose_name='Статус аренды',
                                   choices=[('ON', 'Арендуется'), ('OFF', 'Аренда завершена')],
                                   default='ON',
@@ -78,37 +81,12 @@ class Order(models.Model):
     def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
         return reverse_lazy('profile')
 
-
-
-
 # обработчик сигнала
 @receiver(post_save, sender=Order, dispatch_uid="update_stock_count")
 def hold_parkingPlace(sender, instance, created,  **kwargs):
-
     if created:
         instance.parkingPlace.readyToRent = "OFF"
         instance.parkingPlace.save()
-    # else:
-    #     instance.parkingPlace.readyToRent = "ON"
-    #     Bill.objects.create(user=instance)
-
-# method for updating
-@receiver(post_save, sender=Order, dispatch_uid="update_stock_count")
-def hold_parkingPlace(sender, instance, **kwargs):
-    if instance.orderState == "OFF":
-        amount = instance.parkingPlace.pricePerHour
-        print(amount)
-        parkingPlaceOwner = instance.parkingPlace.owner
-        print(parkingPlaceOwner)
-        arendator_card = BankCard.objects.get(owner=instance.arendator)
-        print(arendator_card)
-        parkOwner_card = BankCard.objects.get(owner=parkingPlaceOwner)
-        print(parkOwner_card)
-        arendator_card.balance -= amount
-        arendator_card.balance.save()
-        parkOwner_card.balance += amount
-        parkOwner_card.balance.save()
-
 
 class BankCard(models.Model):
     owner = models.ForeignKey(AppUser, on_delete=models.CASCADE, verbose_name='Владелец карты')
@@ -130,6 +108,7 @@ class Сheque(models.Model):
                               related_name='Сheque_payer',
                               verbose_name='Плательщик')
     amount = models.IntegerField(default=333, verbose_name='Стоимость парковки')
+    creation_date = models.DateTimeField(auto_now_add=True)
     beneficiary = models.ForeignKey(AppUser,
                                     on_delete=models.CASCADE,
                                     related_name='Сheque_beneficiary',
@@ -139,20 +118,42 @@ class Сheque(models.Model):
         verbose_name = 'Банковский чек'
         verbose_name_plural = 'Банковские чеки'
 
+    @receiver(post_save, sender=Order)
+    def create_cheque_and_payment(sender, instance, created, **kwargs):
+        if not created: # если бронь не создана только что, а обновлена
+
+            # Освобождаем машино-место
+            parking = ParkingPlace.objects.get(owner=instance.parkingPlace.owner)
+            parking.readyToRent = "ON"  # и делаем его доступной для новой аренды
+            parking.save(update_fields=["readyToRent"])
+
+            rent_time = timezone.now() - instance.creation_date         #  вычисляем время аренды
+            rent_hours = rent_time.seconds // 3600                      # вычисляем часы аренды
+            if rent_hours == 0:
+                rent_hours += 1
+            rent_minutes = rent_time.seconds % 3600 // 60               # вычисляем минуты аренды
+            price_per_hour = instance.parkingPlace.pricePerHour         # извлекаем стоимость аренды за час
+            price_hours = (rent_hours * price_per_hour)                 # вычисляем стоимость арендованных часов
+            price_per_min = (price_per_hour / 60)
+            price_minutes = + (price_per_min * rent_minutes)            # вычисляем стоимость арендованных минут
+            total_price = int(price_hours + price_minutes)              # вычисляем полную стоимость аренды
+
+            Сheque.objects.create(payer=instance.arendator,
+                                  beneficiary=instance.parkingPlace.owner,
+                                  amount=total_price
+                                  )
+
+
+            beneficiary_card = BankCard.objects.get(owner=instance.parkingPlace.owner)
+            payer_card = BankCard.objects.get(owner=instance.arendator)
+
+            beneficiary_card.balance += total_price
+            beneficiary_card.save(update_fields=["balance"])
+            payer_card.balance -= total_price
+            payer_card.save(update_fields=["balance"])
+
+
     def __str__(self):
         return f'Оплата парковки на сумму {self.amount}. Получатель {self.beneficiary}'
 
-    @receiver(post_save, sender=Order)
-    def create_cheque_and_payment(sender, instance, created, **kwargs):
-        if not created:
-            Сheque.objects.create(payer=instance.arendator,
-                                  beneficiary=instance.parkingPlace.owner,
-                                  amount=150
-                                  )
-            beneficiary = BankCard.objects.get(owner=instance.parkingPlace.owner)
-            payer = BankCard.objects.get(owner=instance.arendator)
-            beneficiary.balance += 150
-            beneficiary.save(update_fields=["balance"])
-            payer.balance -= 150
-            payer.save(update_fields=["balance"])
 

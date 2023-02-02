@@ -11,7 +11,8 @@ from .views import (
     EditProfile,
     stop_arendation,
     CreateBankCard,
-    DeleteBankCard
+    DeleteBankCard,
+    UpdateOrder
 )
 
 
@@ -26,7 +27,7 @@ urlpatterns = [
 
     path('profile', Profile.as_view(), name='profile'),    # Удалить машино-место
     path('edit_profile/<int:pk>', EditProfile.as_view(), name='edit_profile'),  # Удалить машино-место
-    # path('profile/edit_profile/<int:pk>', UpdateOrder.as_view(), name='update_order'),  # Удалить машино-место
+    path('profile/edit_order/<int:pk>', UpdateOrder.as_view(), name='update_order'),  # Удалить машино-место
     path('create_bankcard', CreateBankCard.as_view(), name='create_bankcard'),
     path('delete_bankcard/<int:pk>', DeleteBankCard.as_view(), name='delete_bankcard'),
     path('stop_arenda/<int:pk>', stop_arendation, name='stop_arendation'),

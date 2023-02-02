@@ -1,10 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, ListView, CreateView, DetailView, UpdateView, DeleteView
-from .models import ParkingPlace, Order, AppUser, BankCard
+from .models import ParkingPlace, Order, AppUser, BankCard, Сheque
 from .forms import ParkingForm, OrderForm, ProfileForm, BankCardForm
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
+from datetime import datetime
+from django.utils import timezone
 # Create your views here.
 
 #from django.contrib.postgres.search import SearchVector, SearchQuery, SearchHeadline
@@ -99,15 +101,20 @@ class Profile(TemplateView):
         # В ответе мы должны получить словарь.
         context = super().get_context_data(**kwargs)
         # К словарю добавим список связанных с объявлением откликов'.
+        context['time_now'] = timezone.now() #  datetime.utcnow()
         user = self.request.user
         profile = AppUser.objects.get(user=user)
         myCards = BankCard.objects.filter(owner=profile)
         myParkingPlaces = ParkingPlace.objects.filter(owner=profile)
+
         myBooking = Order.objects.filter(arendator=profile, orderState='ON')
+        myProfits = Сheque.objects.filter(beneficiary=profile)
         context['profile'] = profile
         context['my_places'] = myParkingPlaces
         context['my_cards'] = myCards
         context['my_orders'] = myBooking
+        context['my_profits'] = myProfits
+
         return context
 
 class EditProfile(UpdateView):
@@ -125,6 +132,37 @@ class OrderDetail(DetailView):
     template_name = 'baseapp/order_detail.html'
     # Название объекта, в котором будет выбранное пользователем объявление
     context_object_name = 'order_detail'
+
+class UpdateOrder(UpdateView):
+    template_name = 'baseapp/edit_order.html'
+    form_class = OrderForm
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return Order.objects.get(pk=id)
+
+    def get_context_data(self, **kwargs):
+        # С помощью super() мы обращаемся к родительским классам
+        # и вызываем у них метод get_context_data с теми же аргументами, что и были переданы нам.
+        # В ответе мы должны получить словарь.
+        context = super().get_context_data(**kwargs)
+        # К словарю добавим список связанных с объявлением откликов'.
+        self.request
+        context['time_now'] = timezone.now() #  datetime.utcnow()
+        user = self.request.user
+        profile = AppUser.objects.get(user=user)
+        myCards = BankCard.objects.filter(owner=profile)
+        myParkingPlaces = ParkingPlace.objects.filter(owner=profile)
+
+        myBooking = Order.objects.filter(arendator=profile, orderState='ON')
+        myProfits = Сheque.objects.filter(beneficiary=profile)
+        context['profile'] = profile
+        context['my_places'] = myParkingPlaces
+        context['my_cards'] = myCards
+        context['my_orders'] = myBooking
+        context['my_profits'] = myProfits
+
+        return context
 
 def stop_arendation(request, **kwargs):
     order = Order.objects.get(pk=kwargs['pk'])
@@ -144,7 +182,7 @@ class CreateBankCard(CreateView, LoginRequiredMixin):
         """
         initial = super().get_initial()
         user = self.request.user
-        profile = AppUser.objects.filter(user=user)
+        # profile = AppUser.objects.filter(user=user)
         initial['owner'] = user
         return initial
 

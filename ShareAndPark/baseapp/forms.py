@@ -39,7 +39,7 @@ class OrderForm(ModelForm):
                 ]
 
         widgets = {'arendator': forms.HiddenInput(),
-                   'orderState': forms.HiddenInput(),
+                   # 'orderState': forms.HiddenInput(),
                    'parkingPlace': forms.HiddenInput(),
                    }
 
