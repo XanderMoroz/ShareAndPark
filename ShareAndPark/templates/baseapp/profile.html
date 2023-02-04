@@ -161,7 +161,7 @@
                                     </a>
                                 </p>
                                 <p class="subtitle is-6">
-                                    Владелец {{ my_place.owner.name }} {{ my_place.owner.phoneNumber }}
+                                    Метро: {{ my_place.get_subway_station_display }}
                                 </p>
                             </div>
                             <!-- Информация справа-->
@@ -222,7 +222,7 @@
 
                             <div class="media-content">
                                 <p class="title is-4">
-                                    <a href="#">
+                                    <a href="{% url 'parking_detail' my_order.parkingPlace.id %}">
                                         {{ my_order.get_orderState_display }} машино-место по адресу {{ my_order.parkingPlace.title }}
                                     </a>
                                 </p>
@@ -247,7 +247,7 @@
                         <a href="{% url 'update_order' my_order.id %}" class="card-footer-item">Завершить аренду</a>
 
                         <!-- добавим ссылку на удаление карты-->
-                        <a href="{% url 'stop_arendation' my_order.id %}" class="card-footer-item">Завершить аренду</a>
+<!--                        <a href="{% url 'stop_arendation' my_order.id %}" class="card-footer-item">Завершить аренду</a>-->
                     </footer>
                 </div>
             </div>

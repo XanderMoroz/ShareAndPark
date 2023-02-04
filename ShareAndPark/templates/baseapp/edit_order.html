@@ -1,19 +1,24 @@
 {% extends 'index.html' %}
 
-{% block title %} Редактирование данных банковской карты {% endblock title %}
+{% block title %} Завершение брони {% endblock title %}
  
 {% block content %}
 <!-- Аннотация страницы-->
 <section class="section">
-        <h1 class="title">Редактирование данных банковской карты</h1>
+        <h1 class="title">Завершение аренды машин-оместа</h1>
         <h2 class="subtitle">
-        Здесь вы можете <strong>исправить</strong> данные банковской карты. Поправьте поля, расположенные ниже.
+        Здесь вы можете <strong>завершить и оплатить</strong> аренду. С вашего счета спишется {{ total_price }} рублей.
         </h2>
 </section>
-<form method="POST">
-    {% csrf_token %} 
+
+<div class="box align-center">
+ <h2 class="subtitle">С вас {{ total_price }} руб.</h2>
+    <form method="POST">
+    {% csrf_token %}
     {{ form.media }}
     {{ form.as_table }}<!-- Теперь нам нужна только готовая форма и кнопка -->
-    <input type="submit" value="Применить изменения">
-</form>
+    <input type="submit" value="Оплатить">
+    </form>
+</div>
+
 {% endblock content %}

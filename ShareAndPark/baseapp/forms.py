@@ -5,7 +5,6 @@ from .models import ParkingPlace, Order, AppUser, BankCard
 
 class ParkingForm(ModelForm):
     """ Форма для создания машино-места"""
-    # content = forms.CharField(widget=CKEditorWidget, label='Содержание объявления')
     class Meta:
         """
         В класс мета, как обычно, надо написать модель, по которой будет строиться форма и нужные нам поля.
@@ -17,19 +16,37 @@ class ParkingForm(ModelForm):
             'description',
             'pricePerHour',
             'readyToRent',
+            'subway_station',
             'owner',
                 ]
         labels = {
-            'title': "Заголовок",
-            'description': "Содержание",
+            'title': "Адрес",
+            'description': "Описание",
             'pricePerHour': "Цена за час",
             'readyToRent': "Статус парковочного места",
+            'subway_station': "Ближайшее метро"
         }
 
-        widgets = {'owner': forms.HiddenInput()}
+        widgets = {'owner': forms.HiddenInput(),
+                   'readyToRent': forms.HiddenInput()}
 
 class OrderForm(ModelForm):
     """Форма для создания брони"""
+    class Meta:
+        model = Order
+        fields = [
+            'parkingPlace',
+            'orderState',
+            'arendator'
+                ]
+
+        widgets = {'arendator': forms.HiddenInput(),
+                   'orderState': forms.HiddenInput(),
+                   'parkingPlace': forms.HiddenInput(),
+                   }
+
+class CloseOrderForm(ModelForm):
+    """Форма для завершения брони"""
     class Meta:
         model = Order
         fields = [
@@ -58,20 +75,20 @@ class ProfileForm(ModelForm):
         widgets = {'user': forms.HiddenInput(),
                    }
 
-class ProfileOrderForm(ModelForm):
-    """Форма для создания брони"""
-    class Meta:
-        model = Order
-        fields = [
-            'parkingPlace',
-            'orderState',
-            'arendator'
-                ]
-
-        widgets = {'arendator': forms.HiddenInput(),
-                   # 'orderState': forms.HiddenInput(),
-                   'parkingPlace': forms.HiddenInput(),
-                   }
+# class ProfileOrderForm(ModelForm):
+#     """Форма для создания брони"""
+#     class Meta:
+#         model = Order
+#         fields = [
+#             'parkingPlace',
+#             'orderState',
+#             'arendator'
+#                 ]
+#
+#         widgets = {'arendator': forms.HiddenInput(),
+#                    # 'orderState': forms.HiddenInput(),
+#                    'parkingPlace': forms.HiddenInput(),
+#                    }
 
 class BankCardForm(ModelForm):
     """Форма для создания банковской карты"""
@@ -84,5 +101,5 @@ class BankCardForm(ModelForm):
         ]
 
         widgets = {'owner': forms.HiddenInput(),
-                   'balance': forms.HiddenInput(),
-                   }
+                   'balance': forms.HiddenInput()}
+

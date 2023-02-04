@@ -40,8 +40,11 @@ class AppUser(models.Model):
 
 class ParkingPlace(models.Model):
     owner = models.ForeignKey(AppUser, on_delete=models.CASCADE, verbose_name='Владелец')
-
-    title = models.CharField(max_length=200)
+    subway_station = models.CharField(verbose_name='Ближайшее метро',
+                                      choices=[('KSM', 'Комсомольская'), ('KRS', 'Курская')],
+                                      default='KSM',
+                                      max_length=3)
+    title = models.CharField(max_length=200, verbose_name='Адрес')
     description = models.CharField(max_length=512, verbose_name='Описание')
     pricePerHour = models.IntegerField(verbose_name='Цена за час')
     latitude = models.FloatField(verbose_name='Широта', default=0.0)
