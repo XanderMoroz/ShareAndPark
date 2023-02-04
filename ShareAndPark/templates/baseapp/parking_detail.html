@@ -14,7 +14,9 @@
         <div class="media">
             <div class="media-content">
                 <p class="title is-4">{{ parking_detail.title }}</p>
-                <p class="subtitle is-6">Владелец: {{ parking_detail.owner }}</p>
+                <p class="subtitle is-6">
+                    Метро {{ parking_detail.get_subway_station_display }}
+                    Владелец: {{ parking_detail.owner }}  {{ parking_detail.owner.phoneNumber }}</p>
             </div>
             <div class="media-right">
                 <p class="title is-4">{{ parking_detail.pricePerHour }} руб./час</p>

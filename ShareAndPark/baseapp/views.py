@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView, ListView, CreateView, DetailView, UpdateView, DeleteView
 from .models import ParkingPlace, Order, AppUser, BankCard, Сheque
 from .forms import ParkingForm, OrderForm, CloseOrderForm, ProfileForm, BankCardForm
+from .filters import ParkingPlaceFilter
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
@@ -21,9 +22,26 @@ class MainPage(ListView):
 
 class ParkingList(ListView):
     """Представление каталога"""
-    model = ParkingPlace
+    model = ParkingPlace                                # Имя модели
     template_name = 'baseapp/catalog.html'              # Относительный адрес шаблона
     context_object_name = 'parking_list'                # Имя для обращения в контексте
+    ordering = ['pricePerHour']                        # Сортировка по убыванию цены
+    paginate_by = 1                                     # поставим постраничный вывод в один элемент
+
+    # забираем отфильтрованные объекты переопределяя метод get_context_data
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # вписываем наш фильтр в контекст
+        context['filter'] = ParkingPlaceFilter(self.request.GET, queryset=self.get_queryset())
+        return context
+
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     return ParkingPlaceFilter(self.request.GET, queryset=queryset).qs
+
+
+
+
 
 class SearchParking(ListView):
     """Представление поиска"""

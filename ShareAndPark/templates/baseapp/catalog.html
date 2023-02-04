@@ -3,13 +3,24 @@
 {% block title %} Каталог машино-мест {% endblock title %}
 
 {% block content %}
+
+<!--                 РАЗДЕЛ С ЗАГОЛОВКОМ НАЧАЛО                    -->
 <section class="section">
         <h1 class="title">Каталог машино-мест</h1>
         <h2 class="subtitle">
         Здесь представлены <strong>машино-места</strong>, выбирайте и арендуйте.
         </h2>
 </section>
-    {% for parking_place in parking_list %}
+<!--                 РАЗДЕЛ С ЗАГОЛОВКОМ КОНЕЦ                    -->
+
+<form class="box" method="GET">
+    {{ filter.form.as_table }} <!-- Форму от фильтров за нас сделает Django. А вот кнопку, увы придётся делать самому -->
+    <input type="submit" value="Отфильтровать">
+</form>
+
+<!--                 РАЗДЕЛ С ЗАГОЛОВКОМ НАЧАЛО                    -->
+    {% for parking_place in filter.qs %}
+<div class="content">
 <div class="card">
     <div class="card-content">
         <div class="media">
@@ -24,7 +35,8 @@
                 <p class="title is-4">
                 <a href="{% url 'parking_detail' parking_place.id %}">{{ parking_place.title | truncatewords:7 }}</a>
                 </p>
-                <p class="subtitle is-6">Владелец {{ parking_place.owner }}</p>
+                <p class="subtitle is-6"></p>
+                <p class="subtitle is-6">Метро {{ parking_place.get_subway_station_display }} </p>
             </div>
             <!-- Информация справа-->
             <div class="media-right">
@@ -34,21 +46,22 @@
         </div>
         <div class="content">
             {{ parking_place.description | truncatewords:20 }}
+            Владелец {{ parking_place.owner }} телефон: {{ parking_place.owner.phoneNumber }}
             <br>
         </div>
     </div>
 
-<!--{% if request.user.username == parking_place.owner.user.username %}-->
+    <footer class="card-footer">
+            <!-- добавим Указание на владельца -->
+            <p class="card-footer-item">
+                Владелец {{ parking_place.owner }}
+                {{ parking_place.owner.phoneNumber }}
+            </p>
 
-<!--    <footer class="card-footer">-->
-<!--            &lt;!&ndash; добавим ссылку на редактирование публикации&ndash;&gt;-->
-<!--            <a href="{% url 'update_parking' parking_place.id %}" class="card-footer-item">Редактировать</a>-->
-<!--            &lt;!&ndash; добавим ссылку на удаление публикации&ndash;&gt;-->
-<!--            <a href="{% url 'delete_parking' parking_place.id %}" class="card-footer-item">Удалить</a>-->
-<!--    </footer>-->
-<!-- {% endif %}-->
+    </footer>
+
 </div>
-
+</div>
 
 {% endfor %}
 
