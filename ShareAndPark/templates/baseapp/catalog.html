@@ -6,59 +6,69 @@
 
 <!--                 РАЗДЕЛ С ЗАГОЛОВКОМ НАЧАЛО                    -->
 <section class="section">
-        <h1 class="title">Каталог машино-мест</h1>
-        <h2 class="subtitle">
+    <h1 class="title">Каталог машино-мест</h1>
+    <h2 class="subtitle">
         Здесь представлены <strong>машино-места</strong>, выбирайте и арендуйте.
-        </h2>
+    </h2>
 </section>
 <!--                 РАЗДЕЛ С ЗАГОЛОВКОМ КОНЕЦ                    -->
 
 <form class="box" method="GET">
-    {{ filter.form.as_table }} <!-- Форму от фильтров за нас сделает Django. А вот кнопку, увы придётся делать самому -->
+    {{ filter.form.as_table }}
+    <!-- Форму от фильтров за нас сделает Django. А вот кнопку, увы придётся делать самому -->
     <input type="submit" value="Отфильтровать">
 </form>
 
 <!--                 РАЗДЕЛ С ЗАГОЛОВКОМ НАЧАЛО                    -->
-    {% for parking_place in filter.qs %}
-<div class="content">
-<div class="card">
-    <div class="card-content">
-        <div class="media">
-        <!-- Информация слева-->
-            <div class="media-left">
-                <figure class="image is-48x48">
-                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
-                </figure>
-            </div>
+{% for parking_place in filter.qs %}
 
-            <div class="media-content">
-                <p class="title is-4">
-                <a href="{% url 'parking_detail' parking_place.id %}">{{ parking_place.title | truncatewords:7 }}</a>
-                </p>
-                <p class="subtitle is-6"></p>
-                <p class="subtitle is-6">Метро {{ parking_place.get_subway_station_display }} </p>
-            </div>
-            <!-- Информация справа-->
-            <div class="media-right">
-                <p class="title is-4">{{ parking_place.pricePerHour }} руб./час</p>
-                <p class="subtitle is-6">{{ parking_place.get_readyToRent_display }}</p>
-            </div>
-        </div>
-        <div class="content">
-            {{ parking_place.description | truncatewords:20 }}
-            Владелец {{ parking_place.owner }} телефон: {{ parking_place.owner.phoneNumber }}
-            <br>
+<div class="content">
+    <!--<div class="card">-->
+    <!--    <div class="card-content">-->
+    <!--        <div class="media">-->
+    <!--        &lt;!&ndash; Информация слева&ndash;&gt;-->
+    <!--            <div class="media-left">-->
+    <!--                <figure class="image is-48x48">-->
+    <!--                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">-->
+    <!--                </figure>-->
+    <!--            </div>-->
+
+    <!--            <div class="media-content">-->
+    <!--                <p class="title is-4">-->
+    <!--                <a href="{% url 'parking_detail' parking_place.id %}">{{ parking_place.title | truncatewords:7 }}</a>-->
+    <!--                </p>-->
+    <!--                <p class="subtitle is-6"></p>-->
+    <!--                <p class="subtitle is-6">Метро {{ parking_place.get_subway_station_display }} </p>-->
+    <!--            </div>-->
+    <!--            &lt;!&ndash; Информация справа&ndash;&gt;-->
+    <!--            <div class="media-right">-->
+    <!--                <p class="title is-4">{{ parking_place.pricePerHour }} руб./час</p>-->
+    <!--                <p class="subtitle is-6">{{ parking_place.get_readyToRent_display }}</p>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <div class="parking-place">
+        <img src="" alt="изображение" class="parking-place__img">
+        <div class="parking-place__description">
+            <a class="parking-place__address">{{ parking_place.title | truncatewords:7 }}</a>
+            <h4 class="parking-place__location">{{ parking_place.get_subway_station_display }}</h4>
+            <h6 class="parking-place__price">{{ parking_place.pricePerHour }} р/ час</h6>
         </div>
     </div>
+    <div class="content">
+        {{ parking_place.description | truncatewords:20 }}
+        Владелец {{ parking_place.owner }} телефон: {{ parking_place.owner.phoneNumber }}
+        <br>
+    </div>
+</div>
 
-    <footer class="card-footer">
-            <!-- добавим Указание на владельца -->
-            <p class="card-footer-item">
-                Владелец {{ parking_place.owner }}
-                {{ parking_place.owner.phoneNumber }}
-            </p>
+<footer class="card-footer">
+    <!-- добавим Указание на владельца -->
+    <p class="card-footer-item">
+        Владелец {{ parking_place.owner }}
+        {{ parking_place.owner.phoneNumber }}
+    </p>
 
-    </footer>
+</footer>
 
 </div>
 </div>
