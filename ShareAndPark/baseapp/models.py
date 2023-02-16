@@ -5,6 +5,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
+from .utils import subway_station
+
 # Create your models here.
 
 class AppUser(models.Model):
@@ -48,9 +50,9 @@ class ParkingPlace(models.Model):
     - Статус готовности к аренде.'''
     owner = models.ForeignKey(AppUser, on_delete=models.CASCADE, verbose_name='Владелец')
     subway_station = models.CharField(verbose_name='Ближайшее метро',
-                                      choices=[('KSM', 'Комсомольская'), ('KRS', 'Курская')],
+                                      choices=subway_station,
                                       default='KSM',
-                                      max_length=3)
+                                      max_length=4)
     title = models.CharField(max_length=200, verbose_name='Адрес')
     description = models.CharField(max_length=512, verbose_name='Описание')
     pricePerHour = models.IntegerField(verbose_name='Цена за час')
