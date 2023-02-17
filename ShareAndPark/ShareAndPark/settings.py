@@ -68,6 +68,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.media',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -125,7 +126,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 # путь до статики указывается из папки где manage.py как на примере ниже
-STATIC_URL = './templates/static/'
+STATIC_URL = '/templates/static/'
 
 # строка ниже не влияет на отображение если надо удали
 # STATICFILES_DIRS = [
@@ -139,3 +140,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'profile'
 LOGOUT_REDIRECT_URL = 'welcome page'
+
+
+# MEDIA_URL = "/photos/" # url данных, которые требуется предоставить.
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # будет использоваться для управления сохраненными данными,
