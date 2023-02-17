@@ -67,6 +67,7 @@ class ProfileForm(ModelForm):
     class Meta:
         model = AppUser
         fields = [
+            'photo',
             'user',
             'name',
             'surname',

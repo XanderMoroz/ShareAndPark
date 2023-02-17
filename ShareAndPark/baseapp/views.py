@@ -131,6 +131,9 @@ class Profile(TemplateView):
         myProfits = Сheque.objects.filter(beneficiary=profile)
         context['my_profits'] = myProfits
 
+        myPayments = Сheque.objects.filter(payer=profile)
+        context['my_payments'] = myPayments
+
         return context
 
 class EditProfile(UpdateView):

@@ -16,6 +16,7 @@ class AppUser(models.Model):
     - Фамилия пользователя.
     - Номер телефона пользователя.
     - Согласие с афертой. '''
+    photo = models.ImageField(upload_to='user_photo/', default=None, verbose_name='Фото пользователя')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=128, verbose_name='Имя')
     surname = models.CharField(max_length=128, verbose_name='Фамилия')
@@ -63,7 +64,7 @@ class ParkingPlace(models.Model):
                                    default='ON',
                                    max_length=3
                                    )
-    image = models.ImageField(upload_to='files/', default=None, verbose_name='Фото машино-места')
+    image = models.ImageField(upload_to='parking_photo/', default=None, verbose_name='Фото машино-места')
 
     class Meta:
         verbose_name = 'Машино-место'
@@ -169,7 +170,6 @@ class Сheque(models.Model):
                                   beneficiary=instance.parkingPlace.owner,
                                   amount=total_price
                                   )
-
             # Извлечение карт плательщика и получателя
             beneficiary_card = BankCard.objects.get(owner=instance.parkingPlace.owner)
             payer_card = BankCard.objects.get(owner=instance.arendator)
