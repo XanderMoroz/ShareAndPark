@@ -75,7 +75,6 @@ class ParkingPlace(models.Model):
     def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
         return reverse_lazy('profile')
 
-    # def post
 
 class Order(models.Model):
     '''Модель Order, описывает свойства аренды/брони машино-места. Имеет следующие поля:
@@ -183,9 +182,3 @@ class Сheque(models.Model):
 
     def __str__(self):
         return f'Оплата парковки на сумму {self.amount}. Получатель {self.beneficiary}'
-
-# class ParkingPhoto(models.Model):
-#     parkingPlace = models.ForeignKey(ParkingPlace, on_delete=models.CASCADE, verbose_name='Машино-место')
-#     image = models.ImageField(upload_to='files/', default=None, verbose_name='Фото машино-места')
-#     def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
-#         return reverse_lazy('profile')
