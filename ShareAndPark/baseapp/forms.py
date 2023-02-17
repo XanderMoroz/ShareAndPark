@@ -18,13 +18,15 @@ class ParkingForm(ModelForm):
             'readyToRent',
             'subway_station',
             'owner',
+            'image'
                 ]
         labels = {
             'title': "Адрес",
             'description': "Описание",
             'pricePerHour': "Цена за час",
             'readyToRent': "Статус парковочного места",
-            'subway_station': "Ближайшее метро"
+            'subway_station': "Ближайшее метро",
+            'image': "Фотография парковочного места"
         }
 
         widgets = {'owner': forms.HiddenInput(),
@@ -74,21 +76,6 @@ class ProfileForm(ModelForm):
 
         widgets = {'user': forms.HiddenInput(),
                    }
-
-# class ProfileOrderForm(ModelForm):
-#     """Форма для создания брони"""
-#     class Meta:
-#         model = Order
-#         fields = [
-#             'parkingPlace',
-#             'orderState',
-#             'arendator'
-#                 ]
-#
-#         widgets = {'arendator': forms.HiddenInput(),
-#                    # 'orderState': forms.HiddenInput(),
-#                    'parkingPlace': forms.HiddenInput(),
-#                    }
 
 class BankCardForm(ModelForm):
     """Форма для создания банковской карты"""

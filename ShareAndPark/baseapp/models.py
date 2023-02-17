@@ -56,13 +56,14 @@ class ParkingPlace(models.Model):
     title = models.CharField(max_length=200, verbose_name='Адрес')
     description = models.CharField(max_length=512, verbose_name='Описание')
     pricePerHour = models.IntegerField(verbose_name='Цена за час')
-    latitude = models.FloatField(verbose_name='Широта', default=0.0)
-    longitude = models.FloatField(verbose_name='Долгота', default=0.0)
+    # latitude = models.FloatField(verbose_name='Широта', default=0.0)
+    # longitude = models.FloatField(verbose_name='Долгота', default=0.0)
     readyToRent = models.CharField(verbose_name='Статус',
                                    choices=[('ON', 'Готов к аренде'), ('OFF', 'Не готов к аренде')],
                                    default='ON',
                                    max_length=3
                                    )
+    image = models.ImageField(upload_to='files/', default=None, verbose_name='Фото машино-места')
 
     class Meta:
         verbose_name = 'Машино-место'
@@ -73,6 +74,8 @@ class ParkingPlace(models.Model):
 
     def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
         return reverse_lazy('profile')
+
+    # def post
 
 class Order(models.Model):
     '''Модель Order, описывает свойства аренды/брони машино-места. Имеет следующие поля:
@@ -153,8 +156,8 @@ class Сheque(models.Model):
 
             rent_time = timezone.now() - instance.creation_date         #  вычисляем время аренды
             rent_hours = rent_time.seconds // 3600                      # вычисляем часы аренды
-            if rent_hours == 0:
-                rent_hours += 1
+            # if rent_hours == 0:
+            #     rent_hours += 1
             rent_minutes = rent_time.seconds % 3600 // 60               # вычисляем минуты аренды
             price_per_hour = instance.parkingPlace.pricePerHour         # извлекаем стоимость аренды за час
             price_hours = (rent_hours * price_per_hour)                 # вычисляем стоимость арендованных часов
@@ -181,4 +184,8 @@ class Сheque(models.Model):
     def __str__(self):
         return f'Оплата парковки на сумму {self.amount}. Получатель {self.beneficiary}'
 
-
+# class ParkingPhoto(models.Model):
+#     parkingPlace = models.ForeignKey(ParkingPlace, on_delete=models.CASCADE, verbose_name='Машино-место')
+#     image = models.ImageField(upload_to='files/', default=None, verbose_name='Фото машино-места')
+#     def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
+#         return reverse_lazy('profile')
