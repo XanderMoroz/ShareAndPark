@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    "django.contrib.gis",
     'django_filters',
     'baseapp',
     'users',
@@ -85,9 +86,18 @@ WSGI_APPLICATION = 'ShareAndPark.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # },
+    "default": {
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "USER": "root",
+        "NAME": "parking_test",
+        "PASSWORD": "12345",
+        "PORT": 5432,
+        "HOST": 'localhost',
+
     }
 }
 

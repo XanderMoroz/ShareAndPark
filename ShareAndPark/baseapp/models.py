@@ -4,6 +4,8 @@ from django.urls import reverse, reverse_lazy
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
 
 from .utils import subway_station
 
@@ -49,6 +51,7 @@ class ParkingPlace(models.Model):
     - Стоимость аренды машино-места в час.
 
     - Статус готовности к аренде.'''
+    location = models.PointField(default=Point(37.618423, 55.751244))
     owner = models.ForeignKey(AppUser, on_delete=models.CASCADE, verbose_name='Владелец')
     subway_station = models.CharField(verbose_name='Ближайшее метро',
                                       choices=subway_station,
