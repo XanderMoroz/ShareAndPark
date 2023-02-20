@@ -19,7 +19,13 @@
     <input type="submit" value="Отфильтровать">
 </form>
 
-<!--                 РАЗДЕЛ С ЗАГОЛОВКОМ НАЧАЛО                    -->
+
+<div class="box">
+{{map.html.render|safe}}
+</div>
+
+
+<!--                 РАЗДЕЛ С СПИСКОМ МАШИНО-МЕСТ НАЧАЛО                    -->
 {% for parking_place in filter.qs %}
 
 <div class="content">

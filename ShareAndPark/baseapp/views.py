@@ -7,6 +7,44 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+import folium
+
+class FoliumView(TemplateView):
+    template_name = "folium_app/map.html"
+
+    def get_context_data(self, **kwargs):
+        figure = folium.Figure()
+        m = folium.Map(
+            location=[55.751244, 37.618423],
+            zoom_start=12,
+            tiles='Stamen Terrain'
+        )
+        m.add_to(figure)
+
+        context = super().get_context_data(**kwargs)
+        # К словарю добавим список связанных с объявлением откликов'.
+        user = self.request.user
+        parkingPlaces = ParkingPlace.objects.all()
+        context['places'] = parkingPlaces
+
+        for place in parkingPlaces:
+            print(place.location.coords[0])
+            if place.readyToRent == "ON":
+                folium.Marker(
+                    location=[place.location.coords[1], place.location.coords[0]],
+                    popup=f'{place.title} Цена {place.pricePerHour} руб. в час',
+                    icon=folium.Icon(color='green')
+                ).add_to(m)
+            else:
+                folium.Marker(
+                    location=[place.location.coords[1], place.location.coords[0]],
+                    popup=f'{place.title} Цена {place.pricePerHour} руб. в час',
+                    icon=folium.Icon(color='red')
+                ).add_to(m)
+
+        figure.render()
+        return {"map": figure}
+
 # Create your views here.
 
 #from django.contrib.postgres.search import SearchVector, SearchQuery, SearchHeadline
@@ -19,6 +57,8 @@ class MainPage(ListView):
     # ordering = '-creation_date'
     template_name = 'baseapp/main.html'                 # Относительный адрес шаблона
     context_object_name = 'demo_place_list'             # Имя для обращения в контексте
+
+
 
 class ParkingList(ListView):
     """Представление каталога"""
