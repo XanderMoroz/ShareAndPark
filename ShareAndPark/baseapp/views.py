@@ -26,7 +26,7 @@ class FoliumView(TemplateView, ListView):
         m = folium.Map(
             location=[55.751244, 37.618423],
             zoom_start=12,
-            tiles='Stamen Terrain'
+            tiles='openstreetmap'#,'Stamen Terrain'
         )
         m.add_to(figure)
 
@@ -41,17 +41,17 @@ class FoliumView(TemplateView, ListView):
             htmlcode = f"""<div>
             <img src="{place.image.url}" alt="Flowers in Chania" width="230" height="172">
             <br /><span><h4>{place.pricePerHour} руб. в час </h4></span>
-            # <button><a href="/{place.id}">ПОДРОБНЕЕ</a> </button>
+            <span><h5>{place.description}</h5></span>
+            <span><h5>{place.owner} {place.owner.phoneNumber} </h5></span>
+            <button><a href="/{place.id}">ПОДРОБНЕЕ</a> </button>
             </div>"""
-            tooltip = "Click me!"
+            tooltip = f"{place.readyToRent}!"
 
             folium.Marker(location=place_location,
-                          # popup=f'{place.title} Цена {place.pricePerHour} руб. в час',
                           popup=htmlcode,
                           # icon=place_icon,
                           tooltip=tooltip
                           ).add_to(m)
-
 
         figure.render()
         context["map"] = figure
