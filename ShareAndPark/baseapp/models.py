@@ -60,8 +60,6 @@ class ParkingPlace(models.Model):
     title = models.CharField(max_length=200, verbose_name='Адрес')
     description = models.CharField(max_length=512, verbose_name='Описание')
     pricePerHour = models.IntegerField(verbose_name='Цена за час')
-    # latitude = models.FloatField(verbose_name='Широта', default=0.0)
-    # longitude = models.FloatField(verbose_name='Долгота', default=0.0)
     readyToRent = models.CharField(verbose_name='Статус',
                                    choices=[('ON', 'Готов к аренде'), ('OFF', 'Не готов к аренде')],
                                    default='ON',

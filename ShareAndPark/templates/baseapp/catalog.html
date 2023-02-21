@@ -20,9 +20,7 @@
 </form>
 
 
-<div class="box">
-{{map.html.render|safe}}
-</div>
+
 
 
 <!--                 РАЗДЕЛ С СПИСКОМ МАШИНО-МЕСТ НАЧАЛО                    -->
@@ -52,31 +50,14 @@
                     <p class="subtitle is-6">{{ parking_place.get_readyToRent_display }}</p>
                 </div>
             </div>
-<!--    <div class="parking-place">-->
-<!--        <img src="{{ parking_place.image.url }}" alt="изображение" class="parking-place__img">-->
-<!--        <div class="parking-place__description">-->
-<!--            <a class="parking-place__address">{{ parking_place.title | truncatewords:7 }}</a>-->
-<!--            <h4 class="parking-place__location">{{ parking_place.get_subway_station_display }}</h4>-->
-<!--            <h6 class="parking-place__price">{{ parking_place.pricePerHour }} р/ час</h6>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    <div class="content">-->
-<!--        {{ parking_place.description | truncatewords:20 }}-->
-<!--        Владелец {{ parking_place.owner }} телефон: {{ parking_place.owner.phoneNumber }}-->
-<!--        <br>-->
-<!--    </div>-->
-</div>
-
-<footer class="card-footer">
-    <!-- добавим Указание на владельца -->
-    <p class="card-footer-item">
-        Владелец {{ parking_place.owner }}
-        {{ parking_place.owner.phoneNumber }}
-    </p>
-
-</footer>
-
-</div>
+        </div>
+        <footer class="card-footer">
+            <!-- добавим Указание на владельца -->
+            <p class="card-footer-item">
+                Владелец {{ parking_place.owner }} {{ parking_place.owner.phoneNumber }}
+            </p>
+        </footer>
+    </div>
 </div>
 
 {% endfor %}

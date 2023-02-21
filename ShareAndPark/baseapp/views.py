@@ -9,10 +9,19 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 import folium
 
-class FoliumView(TemplateView):
+class FoliumView(TemplateView, ListView):
+    model = ParkingPlace
+    object_list = ParkingPlace.objects.all()
+    context_object_name = "parking"
     template_name = "folium_app/map.html"
 
     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # К словарю добавим список связанных с объявлением откликов'.
+        user = self.request.user
+        filter_result = ParkingPlaceFilter(self.request.GET, queryset=self.get_queryset())
+        context['filter'] = filter_result
+
         figure = folium.Figure()
         m = folium.Map(
             location=[55.751244, 37.618423],
@@ -21,29 +30,33 @@ class FoliumView(TemplateView):
         )
         m.add_to(figure)
 
-        context = super().get_context_data(**kwargs)
-        # К словарю добавим список связанных с объявлением откликов'.
-        user = self.request.user
-        parkingPlaces = ParkingPlace.objects.all()
-        context['places'] = parkingPlaces
+        for place in filter_result.qs:
+            place_location = [place.location.coords[1], place.location.coords[0]]
+            # if place.readyToRent == "ON":
+            #     place_icon = folium.Icon(color='green')
+            # else:
+            #     place_icon = folium.Icon(color='grey')
+            # href = "{% url 'parking_detail'" + f'{place.id}' +  '%}'
+            # print(href)
+            htmlcode = f"""<div>
+            <img src="{place.image.url}" alt="Flowers in Chania" width="230" height="172">
+            <br /><span><h4>{place.pricePerHour} руб. в час </h4></span>
+            # <button><a href="/{place.id}">ПОДРОБНЕЕ</a> </button>
+            </div>"""
+            tooltip = "Click me!"
 
-        for place in parkingPlaces:
-            print(place.location.coords[0])
-            if place.readyToRent == "ON":
-                folium.Marker(
-                    location=[place.location.coords[1], place.location.coords[0]],
-                    popup=f'{place.title} Цена {place.pricePerHour} руб. в час',
-                    icon=folium.Icon(color='green')
-                ).add_to(m)
-            else:
-                folium.Marker(
-                    location=[place.location.coords[1], place.location.coords[0]],
-                    popup=f'{place.title} Цена {place.pricePerHour} руб. в час',
-                    icon=folium.Icon(color='red')
-                ).add_to(m)
+            folium.Marker(location=place_location,
+                          # popup=f'{place.title} Цена {place.pricePerHour} руб. в час',
+                          popup=htmlcode,
+                          # icon=place_icon,
+                          tooltip=tooltip
+                          ).add_to(m)
+
 
         figure.render()
-        return {"map": figure}
+        context["map"] = figure
+        return context #{"map": figure}
+
 
 # Create your views here.
 
@@ -72,7 +85,9 @@ class ParkingList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # вписываем наш фильтр в контекст
-        context['filter'] = ParkingPlaceFilter(self.request.GET, queryset=self.get_queryset())
+        filter_result = ParkingPlaceFilter(self.request.GET, queryset=self.get_queryset())
+        context['filter'] = filter_result
+
         return context
 
     # def get_queryset(self):

@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from .models import ParkingPlace, AppUser, Order, BankCard, Сheque
-
+from leaflet.admin import LeafletGeoAdmin
 
 @admin.register(ParkingPlace)
-class ParkingPlaceAdmin(GISModelAdmin):
+class ParkingPlaceAdmin(GISModelAdmin, LeafletGeoAdmin):
     list_display = ('location',)
 
     gis_widget_kwargs = {

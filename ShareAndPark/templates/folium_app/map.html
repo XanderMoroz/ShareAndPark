@@ -6,11 +6,22 @@
     {{map.header.render|safe}}
 </head>
 <body>
+<form class="box" method="GET">
+    {{ filter.form.as_table }}
+    <!-- Форму от фильтров за нас сделает Django. А вот кнопку, увы придётся делать самому -->
+    <input type="submit" value="Отфильтровать">
+</form>
+
   <div><h1>Here comes my folium map:</h1></div>
   {{map.html.render|safe}}
   <script>
     {{map.script.render|safe}}
   </script>
+
+<!--{% for parking_place in filter.qs %}-->
+
+<!--{% endfor %}-->
+
 </body>
 </html>
 
