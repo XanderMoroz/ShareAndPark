@@ -9,59 +9,10 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 import folium
 
-class FoliumView(TemplateView, ListView):
-    model = ParkingPlace
-    object_list = ParkingPlace.objects.all()
-    context_object_name = "parking"
-    template_name = "folium_app/map.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # К словарю добавим список связанных с объявлением откликов'.
-        user = self.request.user
-        filter_result = ParkingPlaceFilter(self.request.GET, queryset=self.get_queryset())
-        context['filter'] = filter_result
-
-        figure = folium.Figure()
-        m = folium.Map(
-            location=[55.751244, 37.618423],
-            zoom_start=12,
-            tiles='openstreetmap'#,'Stamen Terrain'
-        )
-        m.add_to(figure)
-
-        for place in filter_result.qs:
-            place_location = [place.location.coords[1], place.location.coords[0]]
-            # if place.readyToRent == "ON":
-            #     place_icon = folium.Icon(color='green')
-            # else:
-            #     place_icon = folium.Icon(color='grey')
-            # href = "{% url 'parking_detail'" + f'{place.id}' +  '%}'
-            # print(href)
-            htmlcode = f"""<div>
-            <img src="{place.image.url}" alt="Flowers in Chania" width="230" height="172">
-            <br /><span><h4>{place.pricePerHour} руб. в час </h4></span>
-            <span><h5>{place.description}</h5></span>
-            <span><h5>{place.owner} {place.owner.phoneNumber} </h5></span>
-            <button><a href="/{place.id}">ПОДРОБНЕЕ</a> </button>
-            </div>"""
-            tooltip = f"{place.readyToRent}!"
-
-            folium.Marker(location=place_location,
-                          popup=htmlcode,
-                          # icon=place_icon,
-                          tooltip=tooltip
-                          ).add_to(m)
-
-        figure.render()
-        context["map"] = figure
-        return context #{"map": figure}
-
-
 # Create your views here.
 
-#from django.contrib.postgres.search import SearchVector, SearchQuery, SearchHeadline
-# from django.contrib.postgres.search import TrigramSimilarity
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchHeadline
+from django.contrib.postgres.search import TrigramSimilarity
 
 
 class MainPage(ListView):
@@ -90,19 +41,32 @@ class ParkingList(ListView):
 
         return context
 
-    # def get_queryset(self):
-    #     queryset = super().get_queryset()
-    #     return ParkingPlaceFilter(self.request.GET, queryset=queryset).qs
-
-
-
-
 
 class SearchParking(ListView):
     """Представление поиска"""
     model = ParkingPlace                                # Имя модели
-    template_name = 'search/search.html'                # Относительный адрес шаблона
+    template_name = 'baseapp/search.html'                       # Относительный адрес шаблона
     context_object_name = 'search_list'                 # Имя для обращения в контексте
+
+
+    # Метод get_context_data позволяет нам изменить набор данных, который будет передан в шаблон.
+    def get_context_data(self, **kwargs):
+        # С помощью super() мы обращаемся к родительским классам
+        # и вызываем у них метод get_context_data с теми же аргументами, что и были переданы нам.
+        context = super().get_context_data(**kwargs)
+        qs = ParkingPlace.objects.all()
+        user_search_request = self.request.GET.get("query")
+        if user_search_request:
+            qs = ParkingPlace.objects.annotate(similarity = TrigramSimilarity('title', user_search_request),).filter(similarity__gt=0.3).order_by('-similarity')
+        else:
+            qs = ParkingPlace.objects.all()
+
+        print(qs)
+        context['search_res'] = qs
+
+        return context
+
+
 
 class ParkingDetail(DetailView, CreateView):
     """Представление машино-места"""
@@ -265,3 +229,52 @@ class DeleteBankCard(DeleteView, LoginRequiredMixin):
     template_name = 'baseapp/delete_bankcard.html'      # Относительный адрес шаблона
     queryset = BankCard.objects.all()                   # Кварисет (набор) схожих объектов
     success_url = reverse_lazy('profile')               # Перенаправление после удаления
+
+
+class FoliumView(TemplateView, ListView):
+    model = ParkingPlace
+    object_list = ParkingPlace.objects.all()
+    context_object_name = "parking"
+    template_name = "folium_app/map.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # К словарю добавим список связанных с объявлением откликов'.
+        user = self.request.user
+        filter_result = ParkingPlaceFilter(self.request.GET, queryset=self.get_queryset())
+        context['filter'] = filter_result
+
+        figure = folium.Figure()
+        m = folium.Map(
+            location=[55.751244, 37.618423],
+            zoom_start=12,
+            tiles='openstreetmap'#,'Stamen Terrain'
+        )
+        m.add_to(figure)
+
+        for place in filter_result.qs:
+            place_location = [place.location.coords[1], place.location.coords[0]]
+            # if place.readyToRent == "ON":
+            #     place_icon = folium.Icon(color='green')
+            # else:
+            #     place_icon = folium.Icon(color='grey')
+            # href = "{% url 'parking_detail'" + f'{place.id}' +  '%}'
+            # print(href)
+            htmlcode = f"""<div>
+            <img src="{place.image.url}" alt="Flowers in Chania" width="230" height="172">
+            <br /><span><h4>{place.pricePerHour} руб. в час </h4></span>
+            <span><h5>{place.description}</h5></span>
+            <span><h5>{place.owner} {place.owner.phoneNumber} </h5></span>
+            <button><a href="/{place.id}">ПОДРОБНЕЕ</a> </button>
+            </div>"""
+            tooltip = f"{place.readyToRent}!"
+
+            folium.Marker(location=place_location,
+                          popup=htmlcode,
+                          # icon=place_icon,
+                          tooltip=tooltip
+                          ).add_to(m)
+
+        figure.render()
+        context["map"] = figure
+        return context #{"map": figure}

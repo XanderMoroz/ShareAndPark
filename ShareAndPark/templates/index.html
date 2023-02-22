@@ -50,7 +50,7 @@
         {{map.header.render|safe}}
 
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-        <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">-->
+        <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
         <!-- Подключаем иконки "fontawesome"-->
         <script src="https://kit.fontawesome.com/d74256e39d.js" crossorigin="anonymous"></script>
 
@@ -72,16 +72,23 @@
 
         <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item" href="{% url 'map' %}">
-                    <span> Карта </span>
-                    <span class="icon">
-                    <i class="fa-solid fa-map"></i>
-                    </span>
-                </a>
+
                 <a class="navbar-item" href="{% url 'parking_list' %}">
                     <span> Каталог </span>
                     <span class="icon">
+                    <i class="fa-solid fa-list"></i>
+                    </span>
+                </a>
+                <a class="navbar-item" href="{% url 'search_list' %}">
+                    <span> Поиск </span>
+                    <span class="icon">
                     <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                </a>
+                <a class="navbar-item" href="{% url 'map' %}">
+                    <span> Карта </span>
+                    <span class="icon">
+                    <i class="fa-solid fa-location-dot"></i>
                     </span>
                 </a>
             </div>
