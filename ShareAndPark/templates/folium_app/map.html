@@ -14,15 +14,13 @@
     <input type="submit" value="Отфильтровать">
 </form>
 
+<div style="width : 500px">
+     {{map|safe}}
+</div>
 
-  {{map.html.render|safe}}
   <script>
-    {{map.script.render|safe}}
+    {{map|safe}}
   </script>
-
-<!--{% for parking_place in filter.qs %}-->
-
-<!--{% endfor %}-->
 
 </body>
 </html>
