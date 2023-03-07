@@ -4,8 +4,8 @@ from .models import ParkingPlace, Order, AppUser, BankCard, Сheque
 from .forms import ParkingForm, OrderForm, CloseOrderForm, ProfileForm, BankCardForm
 from .filters import ParkingPlaceFilter
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
-from django.urls import reverse, reverse_lazy
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.utils import timezone
 import folium
 
@@ -35,9 +35,84 @@ class ParkingList(ListView):
     # забираем отфильтрованные объекты переопределяя метод get_context_data
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # search
+        search_res = ParkingPlace.objects.all()
+        user_search_request = self.request.GET.get("query")
+
+        if user_search_request:
+            search_res = ParkingPlace.objects.annotate \
+                (similarity=TrigramSimilarity \
+                    ('title', user_search_request), ).filter \
+                (similarity__gt=0.3).order_by('-similarity')
+        else:
+            search_res = None
+
         # вписываем наш фильтр в контекст
         filter_result = ParkingPlaceFilter(self.request.GET, queryset=self.get_queryset())
+        # user_search_request = self.request.GET.get("query")
+        # if filter_result:
         context['filter'] = filter_result
+        context['search_res'] = search_res
+
+
+        # вписываем карту "folium" в контекст
+        figure = folium.Figure()
+        mosckow_map = folium.Map(
+            location=[55.751244, 37.618423],
+            zoom_start=10,
+            tiles='openstreetmap',  # ,'Stamen Terrain'
+            # width='100%',
+            # height='40%',
+        )
+        mosckow_map.add_to(figure) # устанавливаем фокус карты
+        if search_res:
+            for place in search_res:
+                place_location = [place.location.coords[1], place.location.coords[0]]
+
+                # устанавливаем карточку машино-места
+                htmlcode = f"""<div>
+                        <img src="{place.image.url}" alt="Flowers in Chania" width="230" height="172">
+                        <br /><span><h4>{place.pricePerHour} руб. в час </h4></span>
+                        <span><h5>{place.description}</h5></span>
+                        <span><h5>{place.owner} {place.owner.phoneNumber} </h5></span>
+                        <button><a href="/{place.id}">ПОДРОБНЕЕ</a> </button>
+                        </div>"""
+                tooltip = f"{place.readyToRent}!"
+                # добавляем машино-место на карту
+                folium.Marker(location=place_location,
+                              popup=htmlcode,
+                              # icon=place_icon,
+                              tooltip=tooltip
+                              ).add_to(mosckow_map)
+
+            # конвертируем данные в html
+            map_html = mosckow_map._repr_html_()
+            context["map"] = map_html
+        else:
+            for place in filter_result.qs:
+                place_location = [place.location.coords[1], place.location.coords[0]]
+
+                # устанавливаем карточку машино-места
+                htmlcode = f"""<div>
+                        <img src="{place.image.url}" alt="Flowers in Chania" width="230" height="172">
+                        <br /><span><h4>{place.pricePerHour} руб. в час </h4></span>
+                        <span><h5>{place.description}</h5></span>
+                        <span><h5>{place.owner} {place.owner.phoneNumber} </h5></span>
+                        <button><a href="/{place.id}">ПОДРОБНЕЕ</a> </button>
+                        </div>"""
+                tooltip = f"{place.readyToRent}!"
+                # добавляем машино-место на карту
+                folium.Marker(location=place_location,
+                              popup=htmlcode,
+                              # icon=place_icon,
+                              tooltip=tooltip
+                              ).add_to(mosckow_map)
+
+            # конвертируем данные в html
+            map_html = mosckow_map._repr_html_()
+            context["map"] = map_html
+
 
         return context
 
@@ -52,21 +127,23 @@ class SearchParking(ListView):
     # Метод get_context_data позволяет нам изменить набор данных, который будет передан в шаблон.
     def get_context_data(self, **kwargs):
         # С помощью super() мы обращаемся к родительским классам
-        # и вызываем у них метод get_context_data с теми же аргументами, что и были переданы нам.
+        # и вызываем у них метод get_context_data с теми же аргументами,
+        # что и были переданы нам.
         context = super().get_context_data(**kwargs)
-        qs = ParkingPlace.objects.all()
+        search_res = ParkingPlace.objects.all()
         user_search_request = self.request.GET.get("query")
         if user_search_request:
-            qs = ParkingPlace.objects.annotate(similarity = TrigramSimilarity('title', user_search_request),).filter(similarity__gt=0.3).order_by('-similarity')
+            search_res = ParkingPlace.objects.annotate\
+                (similarity = TrigramSimilarity\
+                ('title', user_search_request),).filter\
+                (similarity__gt=0.3).order_by('-similarity')
         else:
-            qs = ParkingPlace.objects.all()
+            search_res = ParkingPlace.objects.all()
 
-        print(qs)
-        context['search_res'] = qs
+
+        context['search_res'] = search_res
 
         return context
-
-
 
 class ParkingDetail(DetailView, CreateView):
     """Представление машино-места"""
@@ -229,52 +306,3 @@ class DeleteBankCard(DeleteView, LoginRequiredMixin):
     template_name = 'baseapp/delete_bankcard.html'      # Относительный адрес шаблона
     queryset = BankCard.objects.all()                   # Кварисет (набор) схожих объектов
     success_url = reverse_lazy('profile')               # Перенаправление после удаления
-
-
-class FoliumView(TemplateView, ListView):
-    model = ParkingPlace
-    object_list = ParkingPlace.objects.all()
-    context_object_name = "parking"
-    template_name = "folium_app/map.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # К словарю добавим список связанных с объявлением откликов'.
-        user = self.request.user
-        filter_result = ParkingPlaceFilter(self.request.GET, queryset=self.get_queryset())
-        context['filter'] = filter_result
-
-        figure = folium.Figure()
-        m = folium.Map(
-            location=[55.751244, 37.618423],
-            zoom_start=12,
-            tiles='openstreetmap'#,'Stamen Terrain'
-        )
-        m.add_to(figure)
-
-        for place in filter_result.qs:
-            place_location = [place.location.coords[1], place.location.coords[0]]
-            # if place.readyToRent == "ON":
-            #     place_icon = folium.Icon(color='green')
-            # else:
-            #     place_icon = folium.Icon(color='grey')
-            # href = "{% url 'parking_detail'" + f'{place.id}' +  '%}'
-            # print(href)
-            htmlcode = f"""<div>
-            <img src="{place.image.url}" alt="Flowers in Chania" width="230" height="172">
-            <br /><span><h4>{place.pricePerHour} руб. в час </h4></span>
-            <span><h5>{place.description}</h5></span>
-            <span><h5>{place.owner} {place.owner.phoneNumber} </h5></span>
-            <button><a href="/{place.id}">ПОДРОБНЕЕ</a> </button>
-            </div>"""
-            tooltip = f"{place.readyToRent}!"
-
-            folium.Marker(location=place_location,
-                          popup=htmlcode,
-                          # icon=place_icon,
-                          tooltip=tooltip
-                          ).add_to(m)
-
-        figure.render()
-        context["map"] = figure
-        return context #{"map": figure}
