@@ -79,18 +79,6 @@
                     <i class="fa-solid fa-list"></i>
                     </span>
                 </a>
-                <a class="navbar-item" href="{% url 'search_list' %}">
-                    <span> Поиск </span>
-                    <span class="icon">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                </a>
-                <a class="navbar-item" href="{% url 'map' %}">
-                    <span> Карта </span>
-                    <span class="icon">
-                    <i class="fa-solid fa-location-dot"></i>
-                    </span>
-                </a>
             </div>
 
         {% if request.user.is_authenticated %}
