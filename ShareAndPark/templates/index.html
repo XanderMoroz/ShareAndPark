@@ -1,178 +1,176 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--    <meta charset="utf-8"/>-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
-<!--    <meta name="description" content=""/>-->
-<!--    <meta name="author" content=""/>-->
-<!--    <title>Парковки Москвы</title>-->
-
-<!--    {% load static %}-->
-<!--    <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">-->
-<!--</head>-->
-<!--<body>-->
-<!--<header class="header">-->
-<!--    <h2 class="header__title">-->
-<!--        Парковки Москвы-->
-<!--    </h2>-->
-<!--    <nav class="header__nav">-->
-<!--        <a href="" class="header__nav-link">-->
-<!--            Главная-->
-<!--        </a>-->
-<!--        <a href="" class="header__nav-link">-->
-<!--            Каталог-->
-<!--        </a>-->
-<!--        <a href="" class="header__nav-link">-->
-<!--            Личный кабинет-->
-<!--        </a>-->
-<!--    </nav>-->
-<!--</header>-->
-<!--<main>-->
-
-<!--</main>-->
-<!--<footer>-->
-
-<!--</footer>-->
-<!--</body>-->
-<!--</html>-->
-
-
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Share & Park!</title>
-        <!-- Подключаем картинки из файла статик-->
-        {% load static %}
-        {{map.header.render|safe}}
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content=""/>
+  <meta name="author" content="Konstantin Volik"/>
+  <title>Парковки Москвы</title>
+  <link rel="stylesheet" type="text/css" href="../../../moscow-parking/static/styles/index.css">
+  <link rel="icon" type="image/x-icon" href="../../../moscow-parking/static/icons/favicon.svg">
+</head>
+<body>
+<header class="header">
+  <div class="wrapper">
+    <div class="header__content">
+      <a class="header__logo" href="index.html">
+        <img src="../../../moscow-parking/static/icons/logo.svg" alt="">
+        <h2 class="header__title">
+          Парковки Москвы
+        </h2>
+      </a>
+      <nav class="header__nav">
+        <a href="index.html" class="header__nav-link">Главная</a>
+        <a href="catalog.html" class="header__nav-link">Каталог</a>
+        <a href="profile.html" class="header__nav-link">Личный кабинет</a>
+      </nav>
+      <button onclick="showHeaderNavigation()" class="header__nav-burger"></button>
+    </div>
+  </div>
+</header>
+<!--Оверлей для хедера-->
+<div class="overlay"></div>
+<!--Контейнер для модалки. Очень "классно" использовать вместо нормальной библиотеки нативный JS-->
+<div class="modal"></div>
 
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-        <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
-        <!-- Подключаем иконки "fontawesome"-->
-        <script src="https://kit.fontawesome.com/d74256e39d.js" crossorigin="anonymous"></script>
+<main class="main">
 
-    </head>
-    <body>
-        <!-- Responsive navbar-->
-        <nav class="navbar is-light has-shadow" role="navigation" aria-label="main navigation">
-            <div class="navbar-brand">
-            <a class="navbar-item">
-            <img src="https://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox" width="112" height="28">
-            </a>
-
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            </a>
-            </div>
-
-        <div id="navbarBasicExample" class="navbar-menu">
-            <div class="navbar-start">
-
-                <a class="navbar-item" href="{% url 'parking_list' %}">
-                    <span> Каталог </span>
-                    <span class="icon">
-                    <i class="fa-solid fa-list"></i>
-                    </span>
-                </a>
-            </div>
-
-        {% if request.user.is_authenticated %}
-
-        <div class="navbar-end">
-            <div class="navbar-item">
-                <a class="navbar-item" >
-                    <span> Привет, {{ request.user.username }}!
-                    </span>
-                </a>
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
-                        <span class="icon"><i class="fa-solid fa-user"></i></span>
-                        <span>Личный кабинет</span>
-                    </a>
-                    <div class="navbar-dropdown" >
-                        <a class="navbar-item" href="{% url 'profile' %}">
-                            <span class="icon"><i class="fa-solid fa-pen"></i></span>
-                            <span>В профиль</span>
-                        </a>
-
-                        <hr class="navbar-divider">
-                        <a class="navbar-item" href="{% url 'logout' %}">
-                            <span class="icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span>
-                            <span>Выйти</span>
-                        </a>
-                    </div>
-                </div>
-
-            </div>
+  <section class="intro">
+    <div class="wrapper">
+      <div class="intro__content">
+        <h1 class="intro__title">
+          Найти парковку за 30 секунд
+        </h1>
+        <h6 class="intro__subtitle">
+          Сервис для краткосрочной аренды машиномест в Москве
+        </h6>
+        <div class="intro__features">
+          <span class="intro__features-item">Гарантия свободного места</span>
+          <span class="intro__features-item">Быстро и безопасно</span>
+          <span class="intro__features-item">Доступные цены</span>
         </div>
+      </div>
+    </div>
+  </section>
 
-        {% else %}
-
-        <div class="navbar-end">
-            <div class="navbar-item">
-                <a class="navbar-item" >
-                    <span> Вы еще не авторизованы
-                    </span>
-                </a>
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
-                        <span class="icon"><i class="fa-solid fa-user"></i></span>
-                        <span>Личный кабинет</span>
-                    </a>
-                    <div class="navbar-dropdown" >
-                        <a class="navbar-item" href="{% url 'login' %}">
-                            <span class="icon"><i class="fa-solid fa-right-to-bracket"></i></span>
-                            <span>Войти</span>
-                        </a>
-                        <hr class="navbar-divider">
-                        <a class="navbar-item" href="{% url 'signup' %}">
-                            <span class="icon"><i class="fa-solid fa-address-card"></i></i></span>
-                            <span>Регистрация</span>
-                        </a>
-                    </div>
-                </div>
-
-            </div>
+  <section class="features">
+    <div class="wrapper">
+      <div class="features__content">
+        <div class="features__icons">
+          <img
+              class="features__item-icon"
+              src="../../../moscow-parking/static/icons/clock-icon.svg"
+          />
+          <img
+              class="features__item-icon middle"
+              src="../../../moscow-parking/static/icons/gasoline-icon.svg"
+          />
+          <img
+              class="features__item-icon"
+              src="../../../moscow-parking/static/icons/parking-icon.svg"
+          />
         </div>
-        {% endif %}
-
-
+        <div class="features__item">
+          <h4 class="features__title">
+            +75 000
+          </h4>
+          <span class="features__text">
+            часов сэкономил автомобилистам поиск места через наш сервис
+          </span>
         </div>
-        </nav>
-        <!-- Responsive navbar finish-->
+        <div class="features__item middle">
 
-
-
-        <!-- Page content-->
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                {% block content %}
-                {{ flatpage.content }}
-                {% endblock content %}
-                </div>
-            </div>
+          <h4 class="features__title">
+            +130 000
+          </h4>
+          <span class="features__text">
+            литров бензина сэкономило бронирование и поездка прямо до места парковки
+          </span>
         </div>
+        <div class="features__item">
+          <h4 class="features__title">
+            +350 000
+          </h4>
+          <span class="features__text">
+            частных и коммерческих мест в каталоге
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--Водителям-->
+  <section class="drivers">
+    <div class="drivers__content">
+      <h2 class="drivers__title">Хотите забронировать удобное и недорогое парковочное место?</h2>
+      <ul class="drivers__list">
+        <li>Быстрый и удобный поиск места</li>
+        <li>Парковка без переплат и скрытых комиссий</li>
+        <li>Конфиденциальность данных и безопасность</li>
+      </ul>
+      <a class="drivers__button" href="catalog.html">Найти парковку</a>
+    </div>
+  </section>
+  <!--Владельцам-->
+  <section class="holders">
+    <div class="holders__content">
+      <h2 class="holders__title">Хотите сдать с пользой свободное парковочное место?</h2>
+      <ul class="holders__list">
+        <li>Ежемесячный пассивный доход</li>
+        <li>Прозрачная система платежей</li>
+        <li>Экономия времени на поиск арендатора</li>
+        <li>Юридическая безопасность и конфиденциальность данных</li>
+        <li>Техническая поддержка 24/7</li>
+      </ul>
+      <a class="holders__button" href="profile.html">Сдать место</a>
 
-        <!--Футер страницы -->
-        <footer class="footer">
-            <div class="content has-text-centered">
-                <p>
-                  Условия использования
-                </p>
-                <p>
-                  Договор-оферта
-                </p>
-                <p>
-                  Контакты
-                </p>
-            </div>
-        </footer>
+    </div>
+  </section>
 
+  <section class="about-us">
+    <div class="wrapper">
+      <div class="about-us__content">
+        <h1 class="about-us__title">
+          О нас
+        </h1>
+        <div class="about-us__text">
+          <p class="about-us__text-paragraph">
+            <span class="colored-text">Проект «Парковки Москвы»</span> создан, чтобы решить проблему
+            беспорядочного паркинга на улицах Москвы
+            и создать возможность удобного передвижения для автомобилей и пешеходов.
+          </p>
+          <p class="about-us__text-paragraph">
+            <span class="colored-text">Наша миссия</span> — сделать парковку на улицах Москвы доступной и
+            комфортной для каждого жителя. Мы хотим
+            видеть аккуратные и красивые улицы нашего города, по которым приятно гулять пешеходам.
+            Улыбающихся автомобилистов, спокойно паркующихся и идущих по своим делам.
+          </p>
+          <p class="about-us__text-paragraph">
+            Присоединяйтесь к сообществу «Парковки Москвы», паркуйтесь с выгодой или сдавайте свое паркоместо, чтобы
+            получить дополнительный доход.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    </body>
+</main>
+
+<footer class="footer">
+  <div class="wrapper">
+    <div class="footer__content">
+      <div class="footer__top">
+        <h5 class="footer__title">Парковки Москвы</h5>
+        <h6 class="footer__subtitle">Сервис для краткосрочной аренды машиномест в Москве</h6>
+      </div>
+      <div class="footer__links">
+        <a href="index.html" class="footer__links-item">Условия использования</a>
+        <a href="" class="footer__links-item">Договор оферты</a>
+        <a href="" class="footer__links-item">Служба поддержки</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="../../../moscow-parking/static/js/index.js"></script>
+<script src="../../../moscow-parking/static/js/user.js"></script>
+</body>
+</html>
