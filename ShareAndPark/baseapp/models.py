@@ -4,6 +4,10 @@ from django.urls import reverse, reverse_lazy
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
+
+from .utils import subway_station
 
 # Create your models here.
 
@@ -14,6 +18,7 @@ class AppUser(models.Model):
     - Фамилия пользователя.
     - Номер телефона пользователя.
     - Согласие с афертой. '''
+    photo = models.ImageField(upload_to='user_photo/', default=None, verbose_name='Фото пользователя')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=128, verbose_name='Имя')
     surname = models.CharField(max_length=128, verbose_name='Фамилия')
@@ -46,21 +51,21 @@ class ParkingPlace(models.Model):
     - Стоимость аренды машино-места в час.
 
     - Статус готовности к аренде.'''
+    location = models.PointField(default=Point(37.618423, 55.751244))
     owner = models.ForeignKey(AppUser, on_delete=models.CASCADE, verbose_name='Владелец')
     subway_station = models.CharField(verbose_name='Ближайшее метро',
-                                      choices=[('KSM', 'Комсомольская'), ('KRS', 'Курская')],
+                                      choices=subway_station,
                                       default='KSM',
-                                      max_length=3)
+                                      max_length=4)
     title = models.CharField(max_length=200, verbose_name='Адрес')
     description = models.CharField(max_length=512, verbose_name='Описание')
     pricePerHour = models.IntegerField(verbose_name='Цена за час')
-    latitude = models.FloatField(verbose_name='Широта', default=0.0)
-    longitude = models.FloatField(verbose_name='Долгота', default=0.0)
     readyToRent = models.CharField(verbose_name='Статус',
                                    choices=[('ON', 'Готов к аренде'), ('OFF', 'Не готов к аренде')],
                                    default='ON',
                                    max_length=3
                                    )
+    image = models.ImageField(upload_to='parking_photo/', default=None, verbose_name='Фото машино-места')
 
     class Meta:
         verbose_name = 'Машино-место'
@@ -71,6 +76,7 @@ class ParkingPlace(models.Model):
 
     def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
         return reverse_lazy('profile')
+
 
 class Order(models.Model):
     '''Модель Order, описывает свойства аренды/брони машино-места. Имеет следующие поля:
@@ -151,8 +157,8 @@ class Сheque(models.Model):
 
             rent_time = timezone.now() - instance.creation_date         #  вычисляем время аренды
             rent_hours = rent_time.seconds // 3600                      # вычисляем часы аренды
-            if rent_hours == 0:
-                rent_hours += 1
+            # if rent_hours == 0:
+            #     rent_hours += 1
             rent_minutes = rent_time.seconds % 3600 // 60               # вычисляем минуты аренды
             price_per_hour = instance.parkingPlace.pricePerHour         # извлекаем стоимость аренды за час
             price_hours = (rent_hours * price_per_hour)                 # вычисляем стоимость арендованных часов
@@ -165,7 +171,6 @@ class Сheque(models.Model):
                                   beneficiary=instance.parkingPlace.owner,
                                   amount=total_price
                                   )
-
             # Извлечение карт плательщика и получателя
             beneficiary_card = BankCard.objects.get(owner=instance.parkingPlace.owner)
             payer_card = BankCard.objects.get(owner=instance.arendator)
@@ -178,5 +183,3 @@ class Сheque(models.Model):
 
     def __str__(self):
         return f'Оплата парковки на сумму {self.amount}. Получатель {self.beneficiary}'
-
-

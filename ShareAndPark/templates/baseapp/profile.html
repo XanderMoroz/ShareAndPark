@@ -33,6 +33,14 @@
                 <table class="table ">
                     <thead>
                     <tr>
+                        <th>Фото профиля</th>
+                        <td>
+<!--                            <figure class="image is-96x96">-->
+<!--                                <img src="#" alt="Placeholder image">-->
+<!--                            </figure>-->
+                        </td>
+                    </tr>
+                    <tr>
                         <th>Имя</th>
                         <td>{{ profile.name }}</td>
                     </tr>
@@ -150,7 +158,7 @@
                             <!-- Информация слева-->
                             <div class="media-left">
                                 <figure class="image is-48x48">
-                                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                                    <img src="{{ my_place.image.url }}" alt="Placeholder image">
                                 </figure>
                             </div>
 
@@ -322,5 +330,66 @@
     </div>
 </section>
 <!--                 РАЗДЕЛ С МОИМИ ДОХОДАМИ КОНЕЦ                        -->
+
+<!--                     РАЗДЕЛ С МОИМИ РАСХОДАМИ НАЧАЛО                    -->
+<section class="section">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">
+                МОИ РАСХОДЫ</p>
+            <button class="card-header-icon" aria-label="more options">
+                <span class="icon">
+                    <a href="">
+
+                        <i class="fa-solid fa-money-bill-1-wave"></i>
+                    </a>
+                </span>
+            </button>
+        </header>
+        <div class="card-content">
+        {% if my_profits %}
+            {% for profit in my_profits %}
+
+            <div class="content">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="media">
+                            <!-- Информация слева-->
+<!--                            <div class="media-left">-->
+<!--                                <figure class="image is-48x48">-->
+<!--                                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">-->
+<!--                                </figure>-->
+<!--                            </div>-->
+
+                            <div class="media-content">
+                                <p class="title is-4">
+                                    <a href="#">
+                                        Вы потратили
+                                    </a>
+                                </p>
+                                <p class="subtitle is-6">
+                                    За аренду машино-места по адресу:
+                                </p>
+                            </div>
+                            <!-- Информация справа-->
+                            <div class="media-right">
+                                <p class="title is-4">{{ profit.amount }} рублей.</p>
+                                <p class="subtitle is-6">Дешево отделались!</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <h2 class="subtitle">Слава богу вы еще ничего не потратили...</h2>
+            {% endif %}
+
+        </div>
+    </div>
+</section>
+<!--                 РАЗДЕЛ С МОИМИ РАСХОДАМИ КОНЕЦ                        -->
 
 {% endblock content %}

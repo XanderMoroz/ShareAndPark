@@ -4,13 +4,15 @@ from .models import ParkingPlace, Order, AppUser, BankCard, Сheque
 from .forms import ParkingForm, OrderForm, CloseOrderForm, ProfileForm, BankCardForm
 from .filters import ParkingPlaceFilter
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
-from django.urls import reverse, reverse_lazy
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.utils import timezone
+import folium
+
 # Create your views here.
 
-#from django.contrib.postgres.search import SearchVector, SearchQuery, SearchHeadline
-# from django.contrib.postgres.search import TrigramSimilarity
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchHeadline
+from django.contrib.postgres.search import TrigramSimilarity
 
 
 class MainPage(ListView):
@@ -19,6 +21,8 @@ class MainPage(ListView):
     # ordering = '-creation_date'
     template_name = 'baseapp/main.html'                 # Относительный адрес шаблона
     context_object_name = 'demo_place_list'             # Имя для обращения в контексте
+
+
 
 class ParkingList(ListView):
     """Представление каталога"""
@@ -31,23 +35,115 @@ class ParkingList(ListView):
     # забираем отфильтрованные объекты переопределяя метод get_context_data
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # search
+        search_res = ParkingPlace.objects.all()
+        user_search_request = self.request.GET.get("query")
+
+        if user_search_request:
+            search_res = ParkingPlace.objects.annotate \
+                (similarity=TrigramSimilarity \
+                    ('title', user_search_request), ).filter \
+                (similarity__gt=0.3).order_by('-similarity')
+        else:
+            search_res = None
+
         # вписываем наш фильтр в контекст
-        context['filter'] = ParkingPlaceFilter(self.request.GET, queryset=self.get_queryset())
+        filter_result = ParkingPlaceFilter(self.request.GET, queryset=self.get_queryset())
+        # user_search_request = self.request.GET.get("query")
+        # if filter_result:
+        context['filter'] = filter_result
+        context['search_res'] = search_res
+
+
+        # вписываем карту "folium" в контекст
+        figure = folium.Figure()
+        mosckow_map = folium.Map(
+            location=[55.751244, 37.618423],
+            zoom_start=10,
+            tiles='openstreetmap',  # ,'Stamen Terrain'
+            # width='100%',
+            # height='40%',
+        )
+        mosckow_map.add_to(figure) # устанавливаем фокус карты
+        if search_res:
+            for place in search_res:
+                place_location = [place.location.coords[1], place.location.coords[0]]
+
+                # устанавливаем карточку машино-места
+                htmlcode = f"""<div>
+                        <img src="{place.image.url}" alt="Flowers in Chania" width="230" height="172">
+                        <br /><span><h4>{place.pricePerHour} руб. в час </h4></span>
+                        <span><h5>{place.description}</h5></span>
+                        <span><h5>{place.owner} {place.owner.phoneNumber} </h5></span>
+                        <button><a href="/{place.id}">ПОДРОБНЕЕ</a> </button>
+                        </div>"""
+                tooltip = f"{place.readyToRent}!"
+                # добавляем машино-место на карту
+                folium.Marker(location=place_location,
+                              popup=htmlcode,
+                              # icon=place_icon,
+                              tooltip=tooltip
+                              ).add_to(mosckow_map)
+
+            # конвертируем данные в html
+            map_html = mosckow_map._repr_html_()
+            context["map"] = map_html
+        else:
+            for place in filter_result.qs:
+                place_location = [place.location.coords[1], place.location.coords[0]]
+
+                # устанавливаем карточку машино-места
+                htmlcode = f"""<div>
+                        <img src="{place.image.url}" alt="Flowers in Chania" width="230" height="172">
+                        <br /><span><h4>{place.pricePerHour} руб. в час </h4></span>
+                        <span><h5>{place.description}</h5></span>
+                        <span><h5>{place.owner} {place.owner.phoneNumber} </h5></span>
+                        <button><a href="/{place.id}">ПОДРОБНЕЕ</a> </button>
+                        </div>"""
+                tooltip = f"{place.readyToRent}!"
+                # добавляем машино-место на карту
+                folium.Marker(location=place_location,
+                              popup=htmlcode,
+                              # icon=place_icon,
+                              tooltip=tooltip
+                              ).add_to(mosckow_map)
+
+            # конвертируем данные в html
+            map_html = mosckow_map._repr_html_()
+            context["map"] = map_html
+
+
         return context
-
-    # def get_queryset(self):
-    #     queryset = super().get_queryset()
-    #     return ParkingPlaceFilter(self.request.GET, queryset=queryset).qs
-
-
-
 
 
 class SearchParking(ListView):
     """Представление поиска"""
     model = ParkingPlace                                # Имя модели
-    template_name = 'search/search.html'                # Относительный адрес шаблона
+    template_name = 'baseapp/search.html'                       # Относительный адрес шаблона
     context_object_name = 'search_list'                 # Имя для обращения в контексте
+
+
+    # Метод get_context_data позволяет нам изменить набор данных, который будет передан в шаблон.
+    def get_context_data(self, **kwargs):
+        # С помощью super() мы обращаемся к родительским классам
+        # и вызываем у них метод get_context_data с теми же аргументами,
+        # что и были переданы нам.
+        context = super().get_context_data(**kwargs)
+        search_res = ParkingPlace.objects.all()
+        user_search_request = self.request.GET.get("query")
+        if user_search_request:
+            search_res = ParkingPlace.objects.annotate\
+                (similarity = TrigramSimilarity\
+                ('title', user_search_request),).filter\
+                (similarity__gt=0.3).order_by('-similarity')
+        else:
+            search_res = ParkingPlace.objects.all()
+
+
+        context['search_res'] = search_res
+
+        return context
 
 class ParkingDetail(DetailView, CreateView):
     """Представление машино-места"""
@@ -130,6 +226,9 @@ class Profile(TemplateView):
 
         myProfits = Сheque.objects.filter(beneficiary=profile)
         context['my_profits'] = myProfits
+
+        myPayments = Сheque.objects.filter(payer=profile)
+        context['my_payments'] = myPayments
 
         return context
 

@@ -10,12 +10,12 @@
         Здесь вы можете <strong>создать</strong> добавить ваше машино-место. Заполните поля ниже.
         </h2>
 </section>
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
 
     {{ form.media }} <!-- Теперь нам нужна только готовая форма и кнопка -->
-    {{ form.as_table }}
+    {{ form.as_p }}
 
     <br>
 
