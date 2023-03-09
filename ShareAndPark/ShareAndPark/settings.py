@@ -38,14 +38,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'django.contrib.sites',
     'django.contrib.flatpages',
-
-    "django.contrib.gis",
+    'django.contrib.gis',
     'django_filters',
+
     'baseapp',
     'users',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 ]
+
+DEFAULT_FROM_EMAIL = ''  # здесь указываем уже свою ПОЛНУЮ почту, с которой будут отправляться письма
 
 SITE_ID = 1
 
@@ -72,15 +79,25 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.media',
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'ShareAndPark.wsgi.application'
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+
 
 
 # Database
@@ -158,27 +175,27 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # будет использоваться для управления сохраненными данными,
 
 
-# ACCOUNT_EMAIL_REQUIRED = True
-# ACCOUNT_UNIQUE_EMAIL = True
-# ACCOUNT_USERNAME_REQUIRED = False
-# ACCOUNT_AUTHENTICATION_METHOD = 'email'
-# ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-# ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-# EMAIL_CONFIRMATION_SIGNUP = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+EMAIL_CONFIRMATION_SIGNUP = True
 #
 # ACCOUNT_FORMS = {'signup': 'signup.forms.BasicSignupForm'}
-# # адрес сервера Яндекс-почты для всех один и тот же
-# EMAIL_HOST = 'smtp.yandex.ru'
-# # порт smtp сервера тоже одинаковый
-# EMAIL_PORT = 465
+# адрес сервера Яндекс-почты для всех один и тот же
+EMAIL_HOST = 'smtp.yandex.ru'
+# порт smtp сервера тоже одинаковый
+EMAIL_PORT = 465
 # # ваше имя пользователя. Если ваша почта user@yandex.ru, то писать user.
-# EMAIL_HOST_USER = 'GoodNewsObserver'
+EMAIL_HOST_USER = 'GoodNewsObserver'
 # # пароль от почты
-# EMAIL_HOST_PASSWORD = '12345qq67890'
+EMAIL_HOST_PASSWORD = '3436qwer7176'
 # # Яндекс использует ssl, подробнее почитайте. Включать его здесь надо обязательно
-# EMAIL_USE_SSL = True
+EMAIL_USE_SSL = True
 # # здесь указываем уже свою ПОЛНУЮ почту, с которой будут отправляться письма
 #
-# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER + "@yandex.ru"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER + "@yandex.ru"
 #
 # SERVER_EMAIL = 'GoodNewsObserver@yandex.ru'
