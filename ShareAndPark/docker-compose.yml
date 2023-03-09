@@ -1,12 +1,67 @@
-version: '3.7'
-services:
-  web:
-    build: ./
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./app/:/usr/src/app/
-    ports:
-      - 8000:8000
-    env_file:
-      - .env
+#version: '3.7'
+#services:
+#  web:
+#    build: ./
+#    command: python manage.py runserver 0.0.0.0:8000
+#    volumes:
+#      - ./app/:/usr/src/app/
+#    ports:
+#      - 8000:8000
+#    env_file:
+#      - .env
 
+version: '3'
+
+# хранилища
+volumes:
+    pgdata:
+        driver: local
+services:
+    nginx:
+# при падении будет стараться подняться
+        restart: always
+# только свежий nginx
+        image: nginx:latest
+# слушает порт 8080
+        expose:
+          - 8080
+# мапаем порт 80 на его 8080. Тогда сайт будет доступен по адресу localhost. Убедись, что порт у тебя не занят.
+        ports:
+          - "80:8080"
+# монтируем только те директории, в которых лежит статика, т.к. nginx с динамикой не будет работать. Также директорию с логами и файл настройки, который мы подготовили.
+        volumes:
+            - ./ShareAndPark/static:/srv/www/ShareAndPark/static
+            - ./ShareAndPark/media:/srv/www/ShareAndPark/media
+            - ./ShareAndPark/logs:/srv/www/ShareAndPark/logs
+            - ./docker/nginx:/etc/nginx/conf.d
+# и nginx зависит от контейнера python. Т.е. python должен быть запущен первым
+        depends_on:
+            - python
+    python:
+        restart: always
+# указываем откуда собирать образ
+        build:
+            context: .
+            dockerfile: Dockerfile #docker/python/Dockerfile
+# монтируем директорию проекта
+        volumes:
+            - ./ShareAndPark:/srv/www/ShareAndPark
+        expose:
+          - 8000
+        ports:
+            - 8000:8000
+# запускаем gunicorn
+        command: "gunicorn ShareAndPark.wsgi:application --"
+#"gunicorn -c gunicorn.py ShareAndPark.wsgi"
+    postgres:
+# Ниже даже расписывать не хочу, насколько все просто: логин, пароль, БД, порты и т.д.
+        image: postgres:14
+        ports:
+            - 2345:2345
+        environment:
+            POSTGRES_USER: username
+            POSTGRES_DB_NAME: database_name
+            POSTGRES_PASSWORD: postgresql_password
+            PGDATA: /var/lib/postgresql/data
+        volumes:
+            - pgdata:/var/lib/postgresql/data

@@ -10,17 +10,91 @@
         Здесь вы можете <strong>создать</strong> добавить ваше машино-место. Заполните поля ниже.
         </h2>
 </section>
-<form method="POST" enctype="multipart/form-data">
+
+<section class="section">
+    <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
+    {{ form.non_field_errors }}
 
-    {{ form.media }} <!-- Теперь нам нужна только готовая форма и кнопка -->
-    {{ form.as_p }}
+    {{ form.source.errors }}
+    {{ form.source }}
 
-    <br>
+    {{ form.media.errors }}
+    {{ form.media }}
 
+    <table border="1">
+        <tr>
+            <th>{{ form.location.label_tag }}</th>
+            <td>
+                {{ form.location.errors }}
+                {{ form.location }}
+            </td>
+        </tr>
 
-    <input type="submit" value="Добавить машино-место">
+        <tr>
+            <th>{{ form.title.label_tag }}</th>
+            <td>
+                {{ form.title.errors }}
+                {{ form.title }}
+            </td>
+        </tr>
+
+        <tr>
+            <th>{{ form.description.label_tag }}</th>
+            <td>
+                {{ form.description.errors }}
+                {{ form.description }}
+            </td>
+        </tr>
+
+        <tr>
+            <th>{{ form.pricePerHour.label_tag }}</th>
+            <td>
+                {{ form.pricePerHour.errors }}
+                {{ form.pricePerHour }}
+            </td>
+        </tr>
+
+        <tr>
+            <th>{{ form.subway_station.label_tag }}</th>
+            <td>
+                {{ form.subway_station.errors }}
+                {{ form.subway_station }}
+            </td>
+        </tr>
+
+        <tr>
+            <th>{{ form.image.label_tag }}</th>
+            <td>
+                {{ form.image.errors }}
+                {{ form.image }}
+            </td>
+        </tr>
+
+    </table>
+
+    {% for hidden_field in form.hidden_fields %}
+    {% if hidden_field.errors %}
+    <ul>
+        {% for error in hidden_field.errors %}
+        <li>(hidden field {{ hidden_field.name }})</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {{hidden_field}}
+    {% endfor %}
+
+    <!-- Теперь нам нужна только готовая форма и кнопка -->
+    <input type="submit" value="Применить изменения">
 </form>
 
+<!--<form method="POST" enctype="multipart/form-data">-->
+<!--    {% csrf_token %}-->
+<!--    {{ form.media }}-->
+<!--    {{ form.as_p }}&lt;!&ndash; Теперь нам нужна только готовая форма и кнопка &ndash;&gt;-->
+<!--    <input type="submit" value="Применить изменения">-->
+<!--</form>-->
+
+</section>
 {% endblock content %}
