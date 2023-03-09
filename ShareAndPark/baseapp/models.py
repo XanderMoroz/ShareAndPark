@@ -20,7 +20,7 @@ class AppUser(models.Model):
     - Согласие с афертой. '''
     photo = models.ImageField(upload_to='user_photo/', default=None, verbose_name='Фото пользователя')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=128, verbose_name='Имя')
+    name = models.CharField(max_length=128, verbose_name='Имя', help_text="Введите ваше имя")
     surname = models.CharField(max_length=128, verbose_name='Фамилия')
     phoneNumber = models.CharField(max_length=15, verbose_name='Номер телефона')
     afertaSubmission = models.BooleanField(verbose_name='Согласие с афертой', default=True)

@@ -11,9 +11,87 @@
         </h2>
 </section>
 <form method="POST" enctype="multipart/form-data">
-    {% csrf_token %} 
+    {% csrf_token %}
+<!--    {{ form.media }}-->
+
+    {{ form.non_field_errors }}
+
+    {{ form.source.errors }}
+    {{ form.source }}
+
+    {{ form.media.errors }}
     {{ form.media }}
-    {{ form.as_p }}<!-- Теперь нам нужна только готовая форма и кнопка -->
+
+    <table border="1">
+        <tr>
+            <th>{{ form.photo.label_tag }}</th>
+            <td>
+                {{ form.photo.errors }}
+                {{ form.photo }}
+            </td>
+        </tr>
+
+<!--         <tr>-->
+<!--            <th>{{ form.user.label_tag.is_hidden }}</th>-->
+<!--            <td>-->
+<!--                {{ form.user.errors.is_hidden }}-->
+<!--                {{ form.user.is_hidden }}-->
+<!--            </td>-->
+<!--        </tr>-->
+
+        <tr>
+            <th>{{ form.name.label_tag }}</th>
+            <td>
+                {{ form.name.errors }}
+                {{ form.name }}
+            </td>
+        </tr>
+
+        <tr>
+            <th>{{ form.surname.label_tag }}</th>
+            <td>
+                {{ form.surname.errors }}
+                {{ form.surname }}
+            </td>
+        </tr>
+
+        <tr>
+            <th>{{ form.phoneNumber.label_tag }}</th>
+            <td>
+                {{ form.phoneNumber.errors }}
+                {{ form.phoneNumber }}
+            </td>
+        </tr>
+
+        <tr>
+            <th>{{ form.afertaSubmission.label_tag }}</th>
+            <td>
+                {{ form.afertaSubmission.errors }}
+                {{ form.afertaSubmission }}
+            </td>
+        </tr>
+
+    </table>
+
+    {% for hidden_field in form.hidden_fields %}
+    {% if hidden_field.errors %}
+    <ul>
+        {% for error in hidden_field.errors %}
+        <li>(hidden field {{ hidden_field.name }})</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {{hidden_field}}
+    {% endfor %}
+
+    <!-- Теперь нам нужна только готовая форма и кнопка -->
     <input type="submit" value="Применить изменения">
 </form>
+
+<!--<form method="POST" enctype="multipart/form-data">-->
+<!--    {% csrf_token %}-->
+<!--    {{ form.media }}-->
+<!--    {{ form.as_p }}&lt;!&ndash; Теперь нам нужна только готовая форма и кнопка &ndash;&gt;-->
+<!--    <input type="submit" value="Применить изменения">-->
+<!--</form>-->
 {% endblock content %}
