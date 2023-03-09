@@ -1,10 +1,20 @@
 # from ckeditor.widgets import CKEditorWidget
 from django import forms
+from django.contrib.gis.forms import OSMWidget, PointField
 from django.forms import ModelForm
 from .models import ParkingPlace, Order, AppUser, BankCard
 
+
 class ParkingForm(ModelForm):
     """ Форма для создания машино-места"""
+    location = PointField(widget=
+        OSMWidget(attrs={'map_width': 800,
+                         'map_height': 500,
+                         'default_lon': 37.618423,
+                         'default_lat': 55.751244,
+                         },
+                  ))
+
     class Meta:
         """
         В класс мета, как обычно, надо написать модель, по которой будет строиться форма и нужные нам поля.
@@ -12,13 +22,14 @@ class ParkingForm(ModelForm):
         """
         model = ParkingPlace
         fields = [
+            'location',
             'title',
             'description',
             'pricePerHour',
             'readyToRent',
             'subway_station',
             'owner',
-            'image'
+            'image',
                 ]
         labels = {
             'title': "Адрес",

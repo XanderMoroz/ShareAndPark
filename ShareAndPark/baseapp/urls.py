@@ -12,7 +12,7 @@ from .views import (
     stop_arendation,
     CreateBankCard,
     DeleteBankCard,
-    UpdateOrder
+    UpdateOrder,
 )
 
 
@@ -31,4 +31,5 @@ urlpatterns = [
     path('create_bankcard', CreateBankCard.as_view(), name='create_bankcard'),
     path('delete_bankcard/<int:pk>', DeleteBankCard.as_view(), name='delete_bankcard'),
     path('stop_arenda/<int:pk>', stop_arendation, name='stop_arendation'),
+
 ]
