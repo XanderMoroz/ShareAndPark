@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-#_3rs_1$yf75ak$i$ye(r$pww12cul(unw=&096$sgi3g+di=x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0']
 
 # Application definition
 
@@ -184,16 +184,17 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 EMAIL_CONFIRMATION_SIGNUP = True
 #
 # ACCOUNT_FORMS = {'signup': 'signup.forms.BasicSignupForm'}
+# # Яндекс использует ssl, подробнее почитайте. Включать его здесь надо обязательно
+EMAIL_USE_SSL = True
 # адрес сервера Яндекс-почты для всех один и тот же
 EMAIL_HOST = 'smtp.yandex.ru'
 # порт smtp сервера тоже одинаковый
 EMAIL_PORT = 465
 # # ваше имя пользователя. Если ваша почта user@yandex.ru, то писать user.
-EMAIL_HOST_USER = 'GoodNewsObserver'
+EMAIL_HOST_USER = 'GoodNewsObserver@yandex.ru'
 # # пароль от почты
 EMAIL_HOST_PASSWORD = '3436qwer7176'
-# # Яндекс использует ssl, подробнее почитайте. Включать его здесь надо обязательно
-EMAIL_USE_SSL = True
+
 # # здесь указываем уже свою ПОЛНУЮ почту, с которой будут отправляться письма
 #
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER + "@yandex.ru"

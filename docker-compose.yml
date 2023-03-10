@@ -42,7 +42,7 @@ services:
 # указываем откуда собирать образ
         build:
             context: .
-            dockerfile: Dockerfile #docker/python/Dockerfile
+            dockerfile: docker/python/Dockerfile
 # монтируем директорию проекта
         volumes:
             - ./ShareAndPark:/srv/www/ShareAndPark
@@ -51,8 +51,8 @@ services:
         ports:
             - 8000:8000
 # запускаем gunicorn
-        command: "gunicorn ShareAndPark.wsgi:application --"
-#"gunicorn -c gunicorn.py ShareAndPark.wsgi"
+        command: 'gunicorn --bind 0.0.0.0:8000 ShareAndPark.wsgi'
+# устанавливаем Postgres
     postgres:
 # Ниже даже расписывать не хочу, насколько все просто: логин, пароль, БД, порты и т.д.
         image: postgres:14
