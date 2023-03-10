@@ -59,9 +59,9 @@ services:
         ports:
             - 2345:2345
         environment:
-            POSTGRES_USER: username
-            POSTGRES_DB_NAME: database_name
-            POSTGRES_PASSWORD: postgresql_password
+            POSTGRES_USER: "root"
+            POSTGRES_DB_NAME:  "parking_test" #database_name
+            POSTGRES_PASSWORD:  "12345" #postgresql_password
             PGDATA: /var/lib/postgresql/data
         volumes:
             - pgdata:/var/lib/postgresql/data
