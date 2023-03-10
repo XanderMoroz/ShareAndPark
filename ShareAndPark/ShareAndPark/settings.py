@@ -12,21 +12,20 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+from os import environ  # для хранения переменных окружения
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#_3rs_1$yf75ak$i$ye(r$pww12cul(unw=&096$sgi3g+di=x'
-
+SECRET_KEY = 'django-insecure-#_3rs_1$yf75ak$i$ye(r$pww12cul(unw=&096$sgi3g+di=x' #  os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1']
 
 # Application definition
 
@@ -109,13 +108,12 @@ DATABASES = {
     #     'NAME': BASE_DIR / 'db.sqlite3',
     # },
     "default": {
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "USER": "root",
-        "NAME": "parking_test",
-        "PASSWORD": "12345",
-        "PORT": 5432,
-        "HOST": 'postgres',
-        # "HOST": 'localhost',
+        "ENGINE": "django.contrib.gis.db.backends.postgis",     # environ.get('POSTGRES_DB_ENGINE'),
+        "USER": "root",                                         # environ.get('POSTGRES_USER'),
+        "NAME": "parking_test",                                 # environ.get('POSTGRES_DB_NAME'),
+        "PASSWORD": "12345",                                    # environ.get('POSTGRES_PASSWORD'),
+        "PORT": 5432,                                           # environ.get('POSTGRES_PORT'),
+        "HOST": 'localhost',  # 'postgres',                      # environ.get('POSTGRES_HOST'),
 
     }
 }
