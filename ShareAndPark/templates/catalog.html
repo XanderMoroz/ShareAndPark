@@ -1,28 +1,144 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="static/index.css">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content=""/>
+  <meta name="author" content="Konstantin Volik"/>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=23499f37-148f-4209-a58a-0ff8a2a25941&lang=ru_RU"
+            type="text/javascript">
+    </script>
+  <title>Парковки Москвы</title>
+  <link rel="stylesheet" type="text/css" href="../../../moscow-parking/static/styles/catalog.css">
+  <link rel="icon" type="image/x-icon" href="../../../moscow-parking/static/icons/favicon.svg">
 </head>
 <body>
-<header>
-    <h2>Парковки Москвы</h2>
-    <nav>
-        <a href="">Главная</a>
-        <a href="">Каталог</a>
-        <a href="">Личный кабинет</a>
-    </nav>
-</header>
-<main>
-    <div class="parking-place">
-        <img src="" alt="изображение" class="parking-place__img">
-        <div class="parking-place__description">
-            <h3 class="parking-place__address">Камнеградская 48, к. 1</h3>
-            <h4 class="parking-place__location">Митино</h4>
-            <h6 class="parking-place__price">150 р/ час</h6>
-        </div>
+<header class="header">
+  <div class="wrapper">
+    <div class="header__content">
+      <a class="header__logo" href="index.html">
+        <img src="../../../moscow-parking/static/icons/logo.svg" alt="">
+        <h2 class="header__title">
+          Парковки Москвы
+        </h2>
+      </a>
+      
+      <nav class="header__nav">
+        <a href="index.html" class="header__nav-link">Главная</a>
+        <a href="catalog.html" class="header__nav-link">Каталог</a>
+        <a href="profile.html" class="header__nav-link">Личный кабинет</a>
+      </nav>
+      <button onclick="showHeaderNavigation()" class="header__nav-burger"></button>
     </div>
+  </div>
+</header>
+<div class="overlay"></div>
+<div class="modal"></div>
+
+<main class="main">
+  <button class="scroll-button"><img src="../../../moscow-parking/static/icons/scroll-button.svg" alt=""></button>
+  <section class="map">
+    <div id="map" class="map__content"></div>
+  </section>
+  <section class="catalog">
+    <div class="wrapper">
+      <div class="catalog__content">
+        <div class="catalog__header">
+          <h2 class="catalog__title">
+            Каталог
+          </h2>
+          <h5 class="catalog__subtitle">
+            Найдите нужное место на карте или через поиск по каталогу
+          </h5>
+        </div>
+        <div class="catalog__main">
+          <div class="catalog__search-block">
+
+            <label class="catalog__label">Поиск</label>
+            <div class="catalog__search-block-actions">
+              <input
+                  placeholder="Введите название улицы..."
+                  id="search"
+                  type="search"
+                  class="catalog__search-block-input"
+              >
+              <button class="catalog__search-block-filters" onclick="toggleFilters()">
+                <img src="../../../moscow-parking/static/icons/filter.svg" alt="">
+              </button>
+            </div>
+
+            <div class="catalog__filters">
+              <div class="catalog__filters-select-field">
+                <label class="catalog__filters-label">Ближайшая станция метро</label>
+                <div
+                    id="stations"
+                    class="catalog__filters-select"
+                >
+                  <input
+                      placeholder="Начните вводить название..."
+                      type="text"
+                      class="catalog__filters-select-input"
+                      onclick="showStationsDropdown(this)"
+                  />
+
+                  <div class="catalog__filters-dropdown">
+                    <!--Здесь все станции из массива STATIONS в срипте каталог-->
+                  </div>
+
+                </div>
+
+              </div>
+              <div class="catalog__filters-field">
+                <div class="catalog__filters-range-labels">
+                  <label class="catalog__filters-label">Цена</label>
+                  <label id="price-display" class="catalog__filters-label">
+                    <span id="startPrice"></span> - <span id="endPrice"></span>
+                  </label>
+                </div>
+                <div class="catalog__filters-range-container">
+
+                </div>
+                <div class="catalog__filters-range-indicators">
+                  <label class="catalog__filters-label">0</label>
+                  <label class="catalog__filters-label">2500</label>
+                  <label class="catalog__filters-label">5000</label>
+                </div>
+              </div>
+              <div class="catalog__filters-tags">
+                <!--Сюда пихаем фильтры станций-->
+              </div>
+            </div>
+          </div>
+          <div class="catalog__cards">
+            <!--Блок для карточек-->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
+
+<footer class="footer">
+  <div class="wrapper">
+    <div class="footer__content">
+      <div class="footer__top">
+        <h5 class="footer__title">Парковки Москвы</h5>
+        <h6 class="footer__subtitle">Сервис для краткосрочной аренды машиномест в Москве</h6>
+      </div>
+      <div class="footer__links">
+        <a href="index" class="footer__links-item">Условия использования</a>
+        <a href="" class="footer__links-item">Договор оферты</a>
+        <a href="" class="footer__links-item">Служба поддержки</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="../../../moscow-parking/static/plugins/noUiSlider-15.7.0/dist/nouislider.js"></script>
+<script src="../../../moscow-parking/static/js/homeButtonScript.js"></script>
+<script src="../../../moscow-parking/static/js/index.js"></script>
+<script src="../../../moscow-parking/static/js/catalog.js"></script>
+<script src="../../../moscow-parking/static/js/map.js"></script>
+<script src="../../../moscow-parking/static/js/user.js"></script>
 </body>
 </html>
