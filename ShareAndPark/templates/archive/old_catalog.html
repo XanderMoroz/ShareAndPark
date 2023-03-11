@@ -1,0 +1,141 @@
+{% extends 'index.html' %}
+
+{% block title %} Каталог машино-мест {% endblock title %}
+
+{% block content %}
+
+<!--                 РАЗДЕЛ С ЗАГОЛОВКОМ НАЧАЛО                    -->
+<section class="section">
+    <h1 class="title">Каталог машино-мест</h1>
+    <h2 class="subtitle">
+        Здесь представлены <strong>машино-места</strong>, выбирайте и арендуйте.
+    </h2>
+</section>
+<!--                 РАЗДЕЛ С ЗАГОЛОВКОМ КОНЕЦ----------------------------  -->
+
+<!-- ----------------ФИЛЬТРЫ ДЛЯ СПИСКА МАШИНО-МЕСТ НАЧАЛО----------------  -->
+<form class="box" method="GET">
+    {{ filter.form.as_table }}
+    <!-- Форму от фильтров за нас сделает Django. А вот кнопку, увы придётся делать самому -->
+    <input type="submit" value="Отфильтровать">
+</form>
+<!-- ----------------ФИЛЬТРЫ ДЛЯ СПИСКА МАШИНО-МЕСТ КОНЕЦ----------------  -->
+
+
+<form>
+        {% csrf_token %}
+        <div class="field is-grouped">
+            <p class="control is-expanded">
+            <input class="input" type="text" placeholder="Введите адрес" name="query">
+            </p>
+            <p class="control">
+                <button class="button is-info is-outlined" type="submit">Искать</button>
+            </p>
+        </div>
+
+    <form/>
+
+{% if search_res %}  <!-- ЕСЛИ ПОИСКОВОЙ ЗАПРОС СУЩЕСТВУЕТ -->
+
+<!-- ------------ОТОБРАЖЕНИЕ КАРТЫ СПИСКА МАШИНО-МЕСТ НАЧАЛО--------------  -->
+     {{map|safe}}
+    <script>
+    {{map|safe}}
+  </script>
+<!-- ------------ОТОБРАЖЕНИЕ КАРТЫ СПИСКА МАШИНО-МЕСТ КОНЕЦ--------------  -->
+
+    {% for parking_place in search_res %}
+
+<div class="content">
+    <div class="card">
+        <div class="card-content">
+            <div class="media">
+            <!-- Информация слева-->
+                <div class="media-left">
+                    <figure class="image is-96x96">
+                        <img src="{{ parking_place.image.url }}" alt="Placeholder image">
+                    </figure>
+                </div>
+
+                <div class="media-content">
+                    <p class="title is-4">
+                    <a href="{% url 'parking_detail' parking_place.id %}">{{ parking_place.title | truncatewords:7 }}</a>
+                    </p>
+                    <p class="subtitle is-6"></p>
+                    <p class="subtitle is-6">Метро {{ parking_place.get_subway_station_display }} </p>
+                </div>
+                <!-- Информация справа-->
+                <div class="media-right">
+                    <p class="title is-4">{{ parking_place.pricePerHour }} руб./час</p>
+                    <p class="subtitle is-6">{{ parking_place.get_readyToRent_display }}</p>
+                </div>
+            </div>
+        </div>
+        <footer class="card-footer">
+            <!-- добавим Указание на владельца -->
+            <p class="card-footer-item">
+                Владелец {{ parking_place.owner }} {{ parking_place.owner.phoneNumber }}
+            </p>
+        </footer>
+    </div>
+</div>
+    {% empty %}
+    <h2>No Results</h2>
+{% endfor %}
+<!--                 РАЗДЕЛ С СПИСКОМ МАШИНО-МЕСТ КОНЕЦ                    -->
+
+
+{% else %} <!-- ЕСЛИ ПОИСКОВОЙ ЗАПРОС ОТСУТСТВУЕТ (будем рисовать по фильтрам) -->
+
+
+<!-- ------------ОТОБРАЖЕНИЕ КАРТЫ СПИСКА МАШИНО-МЕСТ НАЧАЛО--------------  -->
+     {{map|safe}}
+    <script>
+    {{map|safe}}
+  </script>
+<!-- ------------ОТОБРАЖЕНИЕ КАРТЫ СПИСКА МАШИНО-МЕСТ КОНЕЦ--------------  -->
+
+<!--                 РАЗДЕЛ С СПИСКОМ МАШИНО-МЕСТ НАЧАЛО                    -->
+{% for parking_place in filter.qs %}
+
+<div class="content">
+    <div class="card">
+        <div class="card-content">
+            <div class="media">
+            <!-- Информация слева-->
+                <div class="media-left">
+                    <figure class="image is-96x96">
+                        <img src="{{ parking_place.image.url }}" alt="Placeholder image">
+                    </figure>
+                </div>
+
+                <div class="media-content">
+                    <p class="title is-4">
+                    <a href="{% url 'parking_detail' parking_place.id %}">{{ parking_place.title | truncatewords:7 }}</a>
+                    </p>
+                    <p class="subtitle is-6"></p>
+                    <p class="subtitle is-6">Метро {{ parking_place.get_subway_station_display }} </p>
+                </div>
+                <!-- Информация справа-->
+                <div class="media-right">
+                    <p class="title is-4">{{ parking_place.pricePerHour }} руб./час</p>
+                    <p class="subtitle is-6">{{ parking_place.get_readyToRent_display }}</p>
+                </div>
+            </div>
+        </div>
+        <footer class="card-footer">
+            <!-- добавим Указание на владельца -->
+            <p class="card-footer-item">
+                Владелец {{ parking_place.owner }} {{ parking_place.owner.phoneNumber }}
+            </p>
+        </footer>
+    </div>
+</div>
+
+{% endfor %}
+<!--                 РАЗДЕЛ С СПИСКОМ МАШИНО-МЕСТ КОНЕЦ                    -->
+
+{% endif %}
+
+
+{% endblock content %}

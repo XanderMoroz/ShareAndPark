@@ -1,0 +1,385 @@
+{% extends 'index.html' %}
+
+{% block title %} Личный кабинет {% endblock %}
+
+{% block content %}
+
+<!--                 РАЗДЕЛ С МОИМ ПРОФИЛЕМ НАЧАЛО                    -->
+<section class="section">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">
+                Личный профиль пользователя {{ user.username|default:'Guest' }}
+            </p>
+            <button class="card-header-icon" aria-label="more options">
+                <span class="icon">
+                    <i class="fa-solid fa-user"></i>
+                </span>
+            </button>
+        </header>
+        <div class="card-content">
+            <div class="content">
+                <table class="table ">
+                    <thead>
+                    <tr>
+                        <th>Фото профиля</th>
+                        <td>
+<!--                            <figure class="image is-96x96">-->
+<!--                                <img src="#" alt="Placeholder image">-->
+<!--                            </figure>-->
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Имя</th>
+                        <td>{{ profile.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Фамилия</th>
+                        <td>{{ profile.surname }}</td>
+                    </tr>
+                    <tr>
+                        <th>Номер телефона</th>
+                        <td>{{ profile.phoneNumber }}</td>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <footer class="card-footer">
+            <a href="{% url 'edit_profile' profile.id %}" class="card-footer-item">Редактировать профиль</a>
+        </footer>
+    </div>
+</section>
+ {% endif %}
+
+<!--                      РАЗДЕЛ С МОИМ ПРОФИЛЕМ КОНЕЦ                      -->
+
+
+<!--           РАЗДЕЛ С МОИМИ БАНКОВСКИМИ КАРТАМИ НАЧАЛО                    -->
+<section class="section">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">МОИ БАНКОВСКИЕ КАРТЫ</p>
+            <button class="card-header-icon" aria-label="more options">
+                <span class="icon">
+                    <a href="{% url 'create_bankcard'%}">
+                        <i class="fa-regular fa-plus"></i>
+                    </a>
+                </span>
+            </button>
+        </header>
+        <div class="card-content">
+        {% if my_cards %}
+            {% for my_card in my_cards %}
+
+            <div class="content">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="media">
+                            <!-- Информация слева-->
+                            <div class="media-left">
+                                <figure class="image is-48x48">
+                                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                                </figure>
+                            </div>
+
+                            <div class="media-content">
+                                <p class="title is-4">
+                                    <a href="#">
+                                        На вашем счете:
+                                    </a>
+                                </p>
+                                <p class="subtitle is-6">
+                                    Владелец {{ my_card.owner.name }}
+                                </p>
+                            </div>
+                            <!-- Информация справа-->
+                            <div class="media-right">
+                                <p class="title is-4">{{ my_card.balance }} рублей.</p>
+                                <p class="subtitle is-6">Не так уж и много</p>
+                            </div>
+                        </div>
+                        <div class="content">
+                            {{ my_place.description | truncatewords:20 }}
+                            <br>
+                        </div>
+                    </div>
+
+                    <footer class="card-footer">
+                        <!-- добавим ссылку на удаление карты-->
+                        <a href="{% url 'delete_bankcard' my_card.id %}" class="card-footer-item">Удалить</a>
+                    </footer>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <h2 class="subtitle">К сожалению вы не добавили ни одной карты...</h2>
+            {% endif %}
+
+        </div>
+    </div>
+</section>
+<!--                 РАЗДЕЛ С МОИМИ БАНКОВСКИМИ КАРТАМИ КОНЕЦ                    -->
+
+
+
+<!--                 РАЗДЕЛ С МОИМИ МАШИНО-МЕСТАМИ НАЧАЛО                    -->
+<section class="section">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">МОИ МАШИНО-МЕСТА</p>
+            <button class="card-header-icon" aria-label="more options">
+                <span class="icon">
+                    <a href="{% url 'create_parking'%}">
+                        <i class="fa-regular fa-plus"></i>
+                    </a>
+                </span>
+            </button>
+        </header>
+        <div class="card-content">
+            {% if my_places  %}
+            {% for my_place in my_places %}
+
+            <div class="content">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="media">
+                            <!-- Информация слева-->
+                            <div class="media-left">
+                                <figure class="image is-48x48">
+                                    <img src="{{ my_place.image.url }}" alt="Placeholder image">
+                                </figure>
+                            </div>
+
+                            <div class="media-content">
+                                <p class="title is-4">
+                                    <a href="{% url 'parking_detail' my_place.id %}">
+                                        {{ my_place.title | truncatewords:7 }}
+                                    </a>
+                                </p>
+                                <p class="subtitle is-6">
+                                    Метро: {{ my_place.get_subway_station_display }}
+                                </p>
+                            </div>
+                            <!-- Информация справа-->
+                            <div class="media-right">
+                                <p class="title is-4">{{ my_place.pricePerHour }} руб./час</p>
+                                <p class="subtitle is-6">{{ my_place.get_readyToRent_display }}</p>
+                            </div>
+                        </div>
+                        <div class="content">
+                            {{ my_place.description | truncatewords:20 }}
+                            <br>
+                        </div>
+                    </div>
+
+                    <footer class="card-footer">
+                        <!-- добавим ссылку на редактирование публикации-->
+                        <a href="{% url 'update_parking' my_place.id %}" class="card-footer-item">Редактировать</a>
+                        <!-- добавим ссылку на удаление публикации-->
+                        <a href="{% url 'delete_parking' my_place.id %}" class="card-footer-item">Удалить</a>
+                    </footer>
+                </div>
+            </div>
+             {% endfor %}
+            {% else %}
+            <h2 class="subtitle">К сожалению вы не добавили ни одного машиноместа...</h2>
+            {% endif %}
+        </div>
+    </div>
+</section>
+<!--                 РАЗДЕЛ С МОИМИ МАШИНО-МЕСТАМИ КОНЕЦ                    -->
+
+<!--                     РАЗДЕЛ С МОИМИ БРОНЯМИ НАЧАЛО                      -->
+<section class="section">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">МОИ БРОНИ</p>
+            <button class="card-header-icon" aria-label="more options">
+                <span class="icon">
+                    <a href="#">
+                        <i class="fa-brands fa-shopify"></i>
+                    </a>
+                </span>
+            </button>
+        </header>
+        <div class="card-content">
+            {% if my_orders  %}
+            {% for my_order in my_orders %}
+            <div class="content">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="media">
+                            <!-- Информация слева-->
+                            <div class="media-left">
+                                <figure class="image is-48x48">
+                                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                                </figure>
+                            </div>
+
+                            <div class="media-content">
+                                <p class="title is-4">
+                                    <a href="{% url 'parking_detail' my_order.parkingPlace.id %}">
+                                        {{ my_order.get_orderState_display }} машино-место по адресу {{ my_order.parkingPlace.title }}
+                                    </a>
+                                </p>
+                                <p class="subtitle is-6">
+                                    Владелец {{ my_order.parkingPlace.owner }} {{ my_order.parkingPlace.owner.phoneNumber }}
+                                </p>
+                            </div>
+                            <!-- Информация справа-->
+                            <div class="media-right">
+                                <p class="title is-4">{{ my_order.creation_date | date:'G:i' }}</p>
+                                <p class="subtitle is-6">{{ my_order.creation_date | date:'d.M.Y.' }}</p>
+                            </div>
+                        </div>
+                        <div class="content">
+                            {{ my_place.description | truncatewords:20 }}
+                            <br>
+                        </div>
+                    </div>
+
+                    <footer class="card-footer">
+                        <!-- добавим ссылку на удаление карты-->
+                        <a href="{% url 'update_order' my_order.id %}" class="card-footer-item">Завершить аренду</a>
+
+                        <!-- добавим ссылку на удаление карты-->
+<!--                        <a href="{% url 'stop_arendation' my_order.id %}" class="card-footer-item">Завершить аренду</a>-->
+                    </footer>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <h2 class="subtitle">Сейчас вы ничего не арендуете...</h2>
+            {% endif %}
+
+
+        </div>
+    </div>
+</section>
+<!--                     РАЗДЕЛ С МОИМИ БРОНЯМИ КОНЕЦ                      -->
+
+<!--                     РАЗДЕЛ С МОИМИ ДОХОДАМИ НАЧАЛО                    -->
+<section class="section">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">
+                МОИ ДОХОДЫ</p>
+            <button class="card-header-icon" aria-label="more options">
+                <span class="icon">
+                    <a href="">
+
+                        <i class="fa-solid fa-money-bill-1-wave"></i>
+                    </a>
+                </span>
+            </button>
+        </header>
+        <div class="card-content">
+        {% if my_cards %}
+            {% for profit in my_payments %}
+
+            <div class="content">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="media">
+                            <!-- Информация слева-->
+<!--                            <div class="media-left">-->
+<!--                                <figure class="image is-48x48">-->
+<!--                                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">-->
+<!--                                </figure>-->
+<!--                            </div>-->
+
+                            <div class="media-content">
+                                <p class="title is-4">
+                                    <a href="#">
+                                        Вы заработали
+                                    </a>
+                                </p>
+                                <p class="subtitle is-6">
+                                    За аренду машино-места по адресу:
+                                </p>
+                            </div>
+                            <!-- Информация справа-->
+                            <div class="media-right">
+                                <p class="title is-4">{{ profit.amount }} рублей.</p>
+                                <p class="subtitle is-6">Так держать!</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <h2 class="subtitle">К сожалению вы ничего не заработали...</h2>
+            {% endif %}
+
+        </div>
+    </div>
+</section>
+<!--                 РАЗДЕЛ С МОИМИ ДОХОДАМИ КОНЕЦ                        -->
+
+<!--                     РАЗДЕЛ С МОИМИ РАСХОДАМИ НАЧАЛО                    -->
+<section class="section">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title">
+                МОИ РАСХОДЫ</p>
+            <button class="card-header-icon" aria-label="more options">
+                <span class="icon">
+                    <a href="">
+
+                        <i class="fa-solid fa-money-bill-1-wave"></i>
+                    </a>
+                </span>
+            </button>
+        </header>
+        <div class="card-content">
+        {% if my_profits %}
+            {% for profit in my_profits %}
+
+            <div class="content">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="media">
+                            <!-- Информация слева-->
+<!--                            <div class="media-left">-->
+<!--                                <figure class="image is-48x48">-->
+<!--                                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">-->
+<!--                                </figure>-->
+<!--                            </div>-->
+
+                            <div class="media-content">
+                                <p class="title is-4">
+                                    <a href="#">
+                                        Вы потратили
+                                    </a>
+                                </p>
+                                <p class="subtitle is-6">
+                                    За аренду машино-места по адресу:
+                                </p>
+                            </div>
+                            <!-- Информация справа-->
+                            <div class="media-right">
+                                <p class="title is-4">{{ profit.amount }} рублей.</p>
+                                <p class="subtitle is-6">Дешево отделались!</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            {% endfor %}
+
+            {% else %}
+            <h2 class="subtitle">Слава богу вы еще ничего не потратили...</h2>
+            {% endif %}
+
+        </div>
+    </div>
+</section>
+<!--                 РАЗДЕЛ С МОИМИ РАСХОДАМИ КОНЕЦ                        -->
+
+{% endblock content %}
