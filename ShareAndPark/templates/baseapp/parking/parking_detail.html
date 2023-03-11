@@ -1,0 +1,114 @@
+{% extends 'index.html' %} <!-- наследуемся от шаблона index.html -->
+
+{% block title %} Страница машино-места {% endblock title %}
+
+{% block content %}
+
+<main class="main">
+
+  <button class="scroll-button">
+    <img src="static/icons/scroll-button.svg" alt=""/>
+  </button>
+
+
+  <section class="parking-place">
+    <div class="wrapper">
+      <div class="parking-place__content">
+        <div class="parking-place__cover">
+          <img src="{{ parking_detail.image.url }}" alt="">
+        </div>
+        <div class="parking-place__description">
+          <h5 class="parking-place__owner">
+            Владелец - {{ parking_detail.owner.name }} {{ parking_detail.owner.surname }}
+          </h5>
+          <h2 class="parking-place__address">{{ parking_detail.title }}</h2>
+          <h3 class="parking-place__station">Театральная</h3>
+          <div class="parking-place__actions">
+            <button class="parking-place__button-rent">Арендовать</button>
+            <button class="parking-place__button-back" onclick="back()">Назад</button>
+          </div>
+          <h5 class="parking-place__description-title">Описание</h5>
+          <p class="parking-place__description-detailed">
+            Уютное место под деревом. Прям очень замечательное. Прям
+            настолько замечательное, что я не могу перестать об этом
+            говорить. Нет, правда, не недооценивайте уютность этого места! А
+            еще позвоните мне и подарите мне печеньку.
+          </p>
+          <button class="parking-place__button-expanding" onclick="toggleDescription()">Раскрыть целиком</button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+  <section class="catalog">
+    <div class="wrapper">
+      <div class="catalog__content">
+
+        <h2 class="catalog__title">Близкие места</h2>
+        <div class="catalog__cards">
+          <a href="" class="catalog__cards-item">
+            <img
+                src="static/images/catalog-card.jpg"
+                alt=""
+                class="catalog__cards-cover"
+            />
+            <div class="catalog__cards-description">
+              <h5 class="catalog__cards-address">
+                Мне-Нужна-Длинная-Улица 48, к. 1
+              </h5>
+              <h6 class="catalog__cards-station">Китай-Город</h6>
+              <p class="catalog__cards-price">550 руб./час</p>
+            </div>
+          </a>
+          <a href="" class="catalog__cards-item">
+            <img
+                src="static/images/catalog-card.jpg"
+                alt=""
+                class="catalog__cards-cover"
+            />
+            <div class="catalog__cards-description">
+              <h5 class="catalog__cards-address">
+                Мне-Нужна-Длинная-Улица 48, к. 1
+              </h5>
+              <h6 class="catalog__cards-station">Китай-Город</h6>
+              <p class="catalog__cards-price">550 руб./час</p>
+            </div>
+          </a>
+          <a href="" class="catalog__cards-item">
+            <img
+                src="static/images/catalog-card.jpg"
+                alt=""
+                class="catalog__cards-cover"
+            />
+            <div class="catalog__cards-description">
+              <h5 class="catalog__cards-address">
+                Мне-Нужна-Длинная-Улица 48, к. 1
+              </h5>
+              <h6 class="catalog__cards-station">Китай-Город</h6>
+              <p class="catalog__cards-price">550 руб./час</p>
+            </div>
+          </a>
+          <a href="" class="catalog__cards-item">
+            <img
+                src="static/images/catalog-card.jpg"
+                alt=""
+                class="catalog__cards-cover"
+            />
+            <div class="catalog__cards-description">
+              <h5 class="catalog__cards-address">
+                Мне-Нужна-Длинная-Улица 48, к. 1
+              </h5>
+              <h6 class="catalog__cards-station">Китай-Город</h6>
+              <p class="catalog__cards-price">550 руб./час</p>
+            </div>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+{% endblock content %}
+
+

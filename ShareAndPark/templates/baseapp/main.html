@@ -3,61 +3,185 @@
 {% block title %} Главная страница {% endblock title %}
 
 {% block content %}
-<section class="section is-medium">
-        <div class=" has-text-centered">
-            <h1 class="title">Share&Park</h1>
-            <h2 class="subtitle">
-                Описание сервиса <strong>самое продающее</strong>, из всех возможных.
-            </h2>
-            <a href="{% url 'signup' %}">
-            <button class="button is-link is-outlined">Хочу парковку</button>
-            </a>
-            <a href="{% url 'signup' %}">
-            <button class="button is-info is-outlined">Xочу сдать паркинг</button>
-            </a>
-        </div>
-        <div class="content has-text-centered">
 
+<main class="main">
 
+  <section class="intro">
+    <div class="wrapper">
+      <div class="intro__content">
+        <h1 class="intro__title">
+          Найти парковку за 30 секунд
+        </h1>
+        <h6 class="intro__subtitle">
+          Сервис для краткосрочной аренды машиномест в Москве
+        </h6>
+        <div class="intro__features">
+          <span class="intro__features-item">Гарантия свободного места</span>
+          <span class="intro__features-item">Быстро и безопасно</span>
+          <span class="intro__features-item">Доступные цены</span>
         </div>
-        </section>
-
-<h2 class="subtitle">Доступная парковка</h2>
-   <!-- Выводим товары, только если они есть с помощью тега if -->
-   {% if demo_place_list %}
-{% for place in demo_place_list %}
-<div class="card">
-    <div class="card-content">
-        <div class="media">
-        <!-- Информация слева-->
-            <div class="media-left">
-                <figure class="image is-48x48">
-                    <img src="{{ place.image.url }}" alt="Placeholder image">
-                </figure>
-            </div>
-
-            <div class="media-content">
-                <p class="title is-4">
-                <a href="{% url 'parking_detail' place.id %}">{{ place.title | truncatewords:7 }}</a>
-                </p>
-                <p class="subtitle is-6">Владелец {{ place.owner }}</p>
-            </div>
-            <!-- Информация справа-->
-            <div class="media-right">
-                <p class="title is-4">{{ place.pricePerHour }} руб./час</p>
-                <p class="subtitle is-6">{{ place.get_readyToRent_display }}</p>
-            </div>
-        </div>
-        <div class="content">
-            {{ place.description | truncatewords:20 }}
-            <br>
-        </div>
+      </div>
     </div>
-    {% endfor %}
-<!--       {{ demo_place_list }}-->
-   {% else %}
-       <!-- Если товаров нет, говорим, что товаров нет ;) -->
-       <h2>Парковочных мест нет!</h2>
-   {% endif %}
+  </section>
+
+  <section class="features">
+    <div class="wrapper">
+      <div class="features__content">
+        <div class="features__icons">
+          <img
+              class="features__item-icon"
+              {% load static %}
+              src="{% static 'icons/clock-icon.svg' %}"
+          />
+          <img
+              class="features__item-icon middle"
+              src="{% static 'icons/gasoline-icon.svg' %}"
+          />
+          <img
+              class="features__item-icon"
+              src="{% static 'icons/parking-icon.svg' %}"
+          />
+        </div>
+        <div class="features__item">
+          <h4 class="features__title">
+            +75 000
+          </h4>
+          <span class="features__text">
+            часов сэкономил автомобилистам поиск места через наш сервис
+          </span>
+        </div>
+        <div class="features__item middle">
+
+          <h4 class="features__title">
+            +130 000
+          </h4>
+          <span class="features__text">
+            литров бензина сэкономило бронирование и поездка прямо до места парковки
+          </span>
+        </div>
+        <div class="features__item">
+          <h4 class="features__title">
+            +350 000
+          </h4>
+          <span class="features__text">
+            частных и коммерческих мест в каталоге
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--Водителям-->
+  <section class="drivers">
+    <div class="drivers__content">
+      <h2 class="drivers__title">Хотите забронировать удобное и недорогое парковочное место?</h2>
+      <ul class="drivers__list">
+        <li>Быстрый и удобный поиск места</li>
+        <li>Парковка без переплат и скрытых комиссий</li>
+        <li>Конфиденциальность данных и безопасность</li>
+      </ul>
+      <a class="drivers__button" href="{% url 'parking_list' %}">Найти парковку</a>
+    </div>
+  </section>
+  <!--Владельцам-->
+  <section class="holders">
+    <div class="holders__content">
+      <h2 class="holders__title">Хотите сдать с пользой свободное парковочное место?</h2>
+      <ul class="holders__list">
+        <li>Ежемесячный пассивный доход</li>
+        <li>Прозрачная система платежей</li>
+        <li>Экономия времени на поиск арендатора</li>
+        <li>Юридическая безопасность и конфиденциальность данных</li>
+        <li>Техническая поддержка 24/7</li>
+      </ul>
+      <a class="holders__button" href="{% url 'signup' %}">Сдать место</a>
+
+    </div>
+  </section>
+
+  <section class="about-us">
+    <div class="wrapper">
+      <div class="about-us__content">
+        <h1 class="about-us__title">
+          О нас
+        </h1>
+        <div class="about-us__text">
+          <p class="about-us__text-paragraph">
+            <span class="colored-text">Проект «Парковки Москвы»</span> создан, чтобы решить проблему
+            беспорядочного паркинга на улицах Москвы
+            и создать возможность удобного передвижения для автомобилей и пешеходов.
+          </p>
+          <p class="about-us__text-paragraph">
+            <span class="colored-text">Наша миссия</span> — сделать парковку на улицах Москвы доступной и
+            комфортной для каждого жителя. Мы хотим
+            видеть аккуратные и красивые улицы нашего города, по которым приятно гулять пешеходам.
+            Улыбающихся автомобилистов, спокойно паркующихся и идущих по своим делам.
+          </p>
+          <p class="about-us__text-paragraph">
+            Присоединяйтесь к сообществу «Парковки Москвы», паркуйтесь с выгодой или сдавайте свое паркоместо, чтобы
+            получить дополнительный доход.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
 
 {% endblock content %}
+<!--<section class="section is-medium">-->
+<!--        <div class=" has-text-centered">-->
+<!--            <h1 class="title">Share&Park</h1>-->
+<!--            <h2 class="subtitle">-->
+<!--                Описание сервиса <strong>самое продающее</strong>, из всех возможных.-->
+<!--            </h2>-->
+<!--            <a href="{% url 'signup' %}">-->
+<!--            <button class="button is-link is-outlined">Хочу парковку</button>-->
+<!--            </a>-->
+<!--            <a href="{% url 'signup' %}">-->
+<!--            <button class="button is-info is-outlined">Xочу сдать паркинг</button>-->
+<!--            </a>-->
+<!--        </div>-->
+<!--        <div class="content has-text-centered">-->
+
+
+<!--        </div>-->
+<!--        </section>-->
+
+<!--<h2 class="subtitle">Доступная парковка</h2>-->
+<!--   &lt;!&ndash; Выводим товары, только если они есть с помощью тега if &ndash;&gt;-->
+<!--   {% if demo_place_list %}-->
+<!--{% for place in demo_place_list %}-->
+<!--<div class="card">-->
+<!--    <div class="card-content">-->
+<!--        <div class="media">-->
+<!--        &lt;!&ndash; Информация слева&ndash;&gt;-->
+<!--            <div class="media-left">-->
+<!--                <figure class="image is-48x48">-->
+<!--                    <img src="{{ place.image.url }}" alt="Placeholder image">-->
+<!--                </figure>-->
+<!--            </div>-->
+
+<!--            <div class="media-content">-->
+<!--                <p class="title is-4">-->
+<!--                <a href="{% url 'parking_detail' place.id %}">{{ place.title | truncatewords:7 }}</a>-->
+<!--                </p>-->
+<!--                <p class="subtitle is-6">Владелец {{ place.owner }}</p>-->
+<!--            </div>-->
+<!--            &lt;!&ndash; Информация справа&ndash;&gt;-->
+<!--            <div class="media-right">-->
+<!--                <p class="title is-4">{{ place.pricePerHour }} руб./час</p>-->
+<!--                <p class="subtitle is-6">{{ place.get_readyToRent_display }}</p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="content">-->
+<!--            {{ place.description | truncatewords:20 }}-->
+<!--            <br>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    {% endfor %}-->
+<!--&lt;!&ndash;       {{ demo_place_list }}&ndash;&gt;-->
+<!--   {% else %}-->
+<!--       &lt;!&ndash; Если товаров нет, говорим, что товаров нет ;) &ndash;&gt;-->
+<!--       <h2>Парковочных мест нет!</h2>-->
+<!--   {% endif %}-->
+

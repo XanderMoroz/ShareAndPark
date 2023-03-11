@@ -153,12 +153,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 # путь до статики указывается из папки где manage.py как на примере ниже
-STATIC_URL = '/templates/static/'
+STATIC_URL = 'static/'
 
 # строка ниже не влияет на отображение если надо удали
-# STATICFILES_DIRS = [
-#     BASE_DIR / "templates" / "static"
-# ]
+STATICFILES_DIRS = [
+    BASE_DIR / "static"
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

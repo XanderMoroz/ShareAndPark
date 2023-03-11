@@ -1,0 +1,191 @@
+{% extends 'index.html' %}
+
+{% block title %} Каталог машино-мест {% endblock title %}
+
+{% block content %}
+
+<main class="main">
+   {% load static %}
+  <button class="scroll-button"><img src="{% static 'icons/scroll-button.svg' %}" alt=""></button>
+
+  {% if search_res %}  <!-- ЕСЛИ ПОИСКОВОЙ ЗАПРОС СУЩЕСТВУЕТ -->
+
+    <!-- ------------ОТОБРАЖЕНИЕ КАРТЫ С РЕЗУЛЬТАТАМИ ПОИСКА НАЧАЛО--------------  -->
+     <section class="map">
+    <div  class="map__content">
+        {{map|safe}}
+        <script>
+        {{map|safe}}
+        </script>
+        </div>
+  </section>
+    <!-- ------------ОТОБРАЖЕНИЕ КАРТЫ С РЕЗУЛЬТАТАМИ ПОИСКА КОНЕЦ--------------  -->
+
+    {% else %} <!-- ЕСЛИ ПОИСКОВОЙ ЗАПРОС НЕ СУЩЕСТВУЕТ-------------------------- -->
+
+    <!-- ------------ОТОБРАЖЕНИЕ КАРТЫ С РЕЗУЛЬТАТАМИ ФИЛЬТРАЦИИ НАЧАЛО--------------  -->
+     <section class="map">
+         <div  class="map__content">
+             {{map|safe}}
+             <script>{{map|safe}}</script>
+        </div>
+     </section>
+    <!-- ------------ОТОБРАЖЕНИЕ КАРТЫ С РЕЗУЛЬТАТАМИ ФИЛЬТРАЦИИ КОНЕЦ--------------  -->
+
+    {% endif %}
+
+  <section class="catalog">
+    <div class="wrapper">
+      <div class="catalog__content">
+        <div class="catalog__header">
+          <h2 class="catalog__title">
+            Каталог
+          </h2>
+          <h5 class="catalog__subtitle">
+            Найдите нужное место на карте или через поиск по каталогу
+          </h5>
+        </div>
+        <div class="catalog__main">
+
+          <div class="catalog__search-block">
+
+              <form style="width: 100%" >
+                {% csrf_token %}
+                <label class="catalog__label">Поиск</label>
+                  <div class="catalog__search-block-actions">
+                    <input placeholder="Введите название улицы..."
+                           class="catalog__search-block-input"
+                           type="text"
+                           name="query">
+                    <button class="catalog__search-block-filters1"
+                            type="submit"
+                            onclick="() => event.preventDefault()">
+                        <img src="{% static 'icons/filter.svg' %}" alt="">
+                    </button>
+
+                    <button type="button"
+                            class="catalog__search-block-filters"
+                            onclick="toggleFilters()">
+                        <img src="{% static 'icons/filter.svg' %}" alt="">
+                    </button>
+                </div>
+              <form/>
+
+<!--            <div class="catalog__search-block-actions">-->
+<!--              <input-->
+<!--                  placeholder="Введите название улицы..."-->
+<!--                  id="search"-->
+<!--                  type="search"-->
+<!--                  class="catalog__search-block-input"-->
+<!--              >-->
+<!--              <button class="catalog__search-block-filters" onclick="toggleFilters()">-->
+<!--                <img src="{% static 'icons/filter.svg' %}" alt="">-->
+<!--              </button>-->
+<!--            </div>-->
+
+            <div class="catalog__filters">
+              <div class="catalog__filters-select-field">
+                <label class="catalog__filters-label">Ближайшая станция метро</label>
+                <div
+                    id="stations"
+                    class="catalog__filters-select"
+                >
+                  <input
+                      placeholder="Начните вводить название..."
+                      type="text"
+                      class="catalog__filters-select-input"
+                      onclick="showStationsDropdown(this)"
+                  />
+
+                  <div class="catalog__filters-dropdown">
+                    <!--Здесь все станции из массива STATIONS в срипте каталог-->
+                  </div>
+
+                </div>
+
+              </div>
+              <div class="catalog__filters-field">
+                <div class="catalog__filters-range-labels">
+                  <label class="catalog__filters-label">Цена</label>
+                  <label id="price-display" class="catalog__filters-label">
+                    <span id="startPrice"></span> - <span id="endPrice"></span>
+                  </label>
+                </div>
+                <div class="catalog__filters-range-container">
+
+                </div>
+                <div class="catalog__filters-range-indicators">
+                  <label class="catalog__filters-label">0</label>
+                  <label class="catalog__filters-label">2500</label>
+                  <label class="catalog__filters-label">5000</label>
+                </div>
+              </div>
+              <div class="catalog__filters-tags">
+                <!--Сюда пихаем фильтры станций-->
+              </div>
+            </div>
+          </div>
+
+             <!--Блок для карточек-->
+          <div class="catalog__cards">
+                {% if search_res %} <!-- ЕСЛИ ПОИСКОВОЙ ЗАПРОС СУЩЕСТВУЕТ -->
+                <!-- ОТОБРАЖЕНИЕ МАШИНОМЕСТ ПО РЕЗУЛЬТАТАМ ПОИСКА НАЧАЛО -->
+                {% for parking_place in search_res %}
+
+              <a class="catalog__cards-item" href="{% url 'parking_detail' parking_place.id %}">
+                  <img class="catalog__cards-cover" src="{{ parking_place.image.url }}">
+                  <div class="catalog__cards-description">
+                      <h5 class="catalog__cards-address">
+                          {{ parking_place.title | truncatewords:7 }}
+                      </h5>
+                      <h6 class="catalog__cards-station">
+                          {{ parking_place.get_subway_station_display }}
+                      </h6>
+                      <p class="catalog__cards-price">{{ parking_place.pricePerHour }}</p>
+                  </div>
+              </a>
+
+              {% empty %}
+              <h2>No Results</h2>
+              {% endfor %}
+              <!-- ОТОБРАЖЕНИЕ МАШИНОМЕСТ ПО РЕЗУЛЬТАТАМ ПОИСКА КОНЕЦ -->
+
+                {% else %} <!-- ЕСЛИ ПОИСКОВОЙ ЗАПРОС НЕ СУЩЕСТВУЕТ-- -->
+
+              {% for parking_place in filter.qs %}
+
+              <!-- ОТОБРАЖЕНИЕ МАШИНОМЕСТ ПО РЕЗУЛЬТАТАМ ФИЛЬТРАЦИИ НАЧАЛО -->
+              <a class="catalog__cards-item" href="{% url 'parking_detail' parking_place.id %}">
+                  <img class="catalog__cards-cover" src="{{ parking_place.image.url }}">
+                  <div class="catalog__cards-description">
+                      <h5 class="catalog__cards-address">
+                          {{ parking_place.title | truncatewords:7 }}
+                      </h5>
+                      <h6 class="catalog__cards-station">
+                          {{ parking_place.get_subway_station_display }}
+                      </h6>
+                      <p class="catalog__cards-price">{{ parking_place.pricePerHour }}</p>
+                  </div>
+              </a>
+
+              {% empty %}
+              <h2>No Results</h2>
+              {% endfor %}
+
+              <!-- ОТОБРАЖЕНИЕ МАШИНОМЕСТ ПО РЕЗУЛЬТАТАМ ФИЛЬТРАЦИИ КОНЕЦ -->
+
+
+                {% endif %} <!-- ЗАВЕРШЕНИЕ УСЛОВИЯ-- -->
+            <!--Блок для карточек-->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</main>
+
+
+{% endblock content %}

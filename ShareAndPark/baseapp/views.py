@@ -27,7 +27,7 @@ class MainPage(ListView):
 class ParkingList(ListView):
     """Представление каталога"""
     model = ParkingPlace                                # Имя модели
-    template_name = 'baseapp/catalog.html'              # Относительный адрес шаблона
+    template_name = 'baseapp/parking/catalog.html'              # Относительный адрес шаблона
     context_object_name = 'parking_list'                # Имя для обращения в контексте
     ordering = ['pricePerHour']                        # Сортировка по убыванию цены
     paginate_by = 1                                     # поставим постраничный вывод в один элемент
@@ -113,42 +113,12 @@ class ParkingList(ListView):
             map_html = mosckow_map._repr_html_()
             context["map"] = map_html
 
-
-        return context
-
-
-class SearchParking(ListView):
-    """Представление поиска"""
-    model = ParkingPlace                                # Имя модели
-    template_name = 'baseapp/search.html'                       # Относительный адрес шаблона
-    context_object_name = 'search_list'                 # Имя для обращения в контексте
-
-
-    # Метод get_context_data позволяет нам изменить набор данных, который будет передан в шаблон.
-    def get_context_data(self, **kwargs):
-        # С помощью super() мы обращаемся к родительским классам
-        # и вызываем у них метод get_context_data с теми же аргументами,
-        # что и были переданы нам.
-        context = super().get_context_data(**kwargs)
-        search_res = ParkingPlace.objects.all()
-        user_search_request = self.request.GET.get("query")
-        if user_search_request:
-            search_res = ParkingPlace.objects.annotate\
-                (similarity = TrigramSimilarity\
-                ('title', user_search_request),).filter\
-                (similarity__gt=0.3).order_by('-similarity')
-        else:
-            search_res = ParkingPlace.objects.all()
-
-
-        context['search_res'] = search_res
-
         return context
 
 class ParkingDetail(DetailView, CreateView):
     """Представление машино-места"""
     model = ParkingPlace
-    template_name = 'baseapp/parking_detail.html'       # Относительный адрес шаблона
+    template_name = 'baseapp/parking/parking_detail.html'       # Относительный адрес шаблона
     context_object_name = 'parking_detail'              # Имя для обращения в контексте
     form_class = OrderForm                              # Имя формы
 
@@ -164,7 +134,7 @@ class ParkingDetail(DetailView, CreateView):
 class CreateParking(CreateView, LoginRequiredMixin):
     """Представление для создания машино-места."""
     model = ParkingPlace                                # Имя модели
-    template_name = 'baseapp/create_parking.html'       # Относительный адрес шаблона
+    template_name = 'baseapp/parking/create_parking.html'       # Относительный адрес шаблона
     form_class = ParkingForm                            # Имя формы
 
     def get_initial(self):
@@ -176,7 +146,7 @@ class CreateParking(CreateView, LoginRequiredMixin):
 
 class UpdateParking(UpdateView, LoginRequiredMixin):
     """Представление для редактирования машино-места."""
-    template_name = 'baseapp/edit_parking.html'         # Относительный адрес шаблона
+    template_name = 'baseapp/parking/edit_parking.html'         # Относительный адрес шаблона
     form_class = ParkingForm                            # Имя формы
 
     def get_object(self, **kwargs):
@@ -187,14 +157,14 @@ class UpdateParking(UpdateView, LoginRequiredMixin):
 
 class DeleteParking(DeleteView, LoginRequiredMixin):
     """Представление для удаления машино-места."""
-    template_name = 'baseapp/delete_parking.html'       # Относительный адрес шаблона
+    template_name = 'baseapp/parking/delete_parking.html'       # Относительный адрес шаблона
     queryset = ParkingPlace.objects.all()               # Кварисет (набор) объектов
     success_url = reverse_lazy('profile')               # Перенаправление после удаления
 
 class Profile(TemplateView):
     """Представление профиля пользователя."""
     model = User                                        # Имя модели
-    template_name = 'baseapp/profile.html'              # Относительный адрес шаблона
+    template_name = 'baseapp/profile/profile.html'              # Относительный адрес шаблона
     form_class = ProfileForm                            # Имя формы
 
     def get_initial(self):
@@ -234,7 +204,7 @@ class Profile(TemplateView):
 
 class EditProfile(UpdateView):
     """Представление для редактирования профиля пользователя."""
-    template_name = 'baseapp/edit_profile.html'         # Относительный адрес шаблона
+    template_name = 'baseapp/profile/edit_profile.html'         # Относительный адрес шаблона
     form_class = ProfileForm                            # Имя формы
 
     # метод get_object мы используем вместо queryset, чтобы получить информацию об объекте, который мы собираемся редактировать
